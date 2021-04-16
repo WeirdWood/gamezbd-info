@@ -63,6 +63,8 @@ export default {
 
     onBeforeMount(async () => {
       try {
+        //Using a cors proxy deployed on Cloudflare Worker, sources here https://github.com/fawazahmed0/cloudflare-multi-cors-proxy
+        //My proxy is strictly whitelisted to only the main site, use a different one on develepment
         var addrArr = ["https://forum.gameznetwork.com/forums/black-desert-events.427/", "https://forum.gameznetwork.com/forums/patch-notes.408/"];
         const response = await fetch("https://small-surf-79d4.zbd-info.workers.dev", {
           method: "POST",
@@ -74,32 +76,34 @@ export default {
         patchArr.value = getPatchData(data);
         eventArr.value = getEventData(data);
 
-        var eventPreviewLinks = [];
-        eventArr.value.forEach((element) => {
-          eventPreviewLinks.push(`${element.url}preview`);
-        });
-
-        const previewsResponse = await fetch("https://small-surf-79d4.zbd-info.workers.dev", {
-          method: "POST",
-          body: JSON.stringify(eventPreviewLinks),
-        });
-        var previewsData = await previewsResponse.text();
-        previewsData = previewsData.replace(/\s+/g, " ");
-        var previewsDataArr = previewsData.split("<a class='multicorsproxy'");
-        previewsDataArr = previewsDataArr.slice(1);
-
-        var linkPattern = new RegExp("href='(.*?)'");
-        var previewPattern = new RegExp(`<blockquote class="previewText">(.*?)</blockquote>`);
-        var eventPeriodPattern = new RegExp("Event period:(.*?)<br");
-        previewsDataArr.forEach((previewString) => {
-          var eventUrl = linkPattern.exec(previewString)[1];
-          eventArr.value.forEach((eventObj, index) => {
-            if (eventUrl === `${eventObj.url}preview`) {
-              let tmp = previewPattern.exec(previewString)[1];
-              eventArr.value[index].period = eventPeriodPattern.exec(tmp)[1];
-            }
+        if (eventArr.value.length) {
+          var eventPreviewLinks = [];
+          eventArr.value.forEach((element) => {
+            eventPreviewLinks.push(`${element.url}preview`);
           });
-        });
+
+          const previewsResponse = await fetch("https://small-surf-79d4.zbd-info.workers.dev", {
+            method: "POST",
+            body: JSON.stringify(eventPreviewLinks),
+          });
+          var previewsData = await previewsResponse.text();
+          previewsData = previewsData.replace(/\s+/g, " ");
+          var previewsDataArr = previewsData.split("<a class='multicorsproxy'");
+          previewsDataArr = previewsDataArr.slice(1);
+
+          var linkPattern = new RegExp("href='(.*?)'");
+          var previewPattern = new RegExp(`<blockquote class="previewText">(.*?)</blockquote>`);
+          var eventPeriodPattern = new RegExp("Event period:(.*?)<br");
+          previewsDataArr.forEach((previewString) => {
+            var eventUrl = linkPattern.exec(previewString)[1];
+            eventArr.value.forEach((eventObj, index) => {
+              if (eventUrl === `${eventObj.url}preview`) {
+                let tmp = previewPattern.exec(previewString)[1];
+                eventArr.value[index].period = eventPeriodPattern.exec(tmp)[1];
+              }
+            });
+          });
+        }
       } catch (err) {
         console.log(err);
       }
