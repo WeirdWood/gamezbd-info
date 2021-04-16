@@ -1,4 +1,5 @@
 # gamezbd-info
+A small web app containing various convenient tools for GamezBD's users.
 
 ## Project setup
 ```
