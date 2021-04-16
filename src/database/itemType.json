@@ -1,0 +1,542 @@
+[
+  {
+    "id": 0,
+    "name": "Accessory (Green, Blue, Yellow)",
+    "fsValue": 0.5,
+    "baseRates": [
+      {
+        "name": "PRI",
+        "rate": 25
+      },
+      {
+        "name": "DUO",
+        "rate": 10
+      },
+      {
+        "name": "TRI",
+        "rate": 7.5
+      },
+      {
+        "name": "TET",
+        "rate": 2.5
+      },
+      {
+        "name": "PEN",
+        "rate": 0.5
+      }
+    ]
+  },
+  {
+    "id": 1,
+    "name": "Weapon (White, Blue, Yellow)",
+    "fsValue": 0.5,
+    "baseRates": [
+      {
+        "name": "+13",
+        "rate": 4
+      },
+      {
+        "name": "+14",
+        "rate": 2.5
+      },
+      {
+        "name": "+15",
+        "rate": 2
+      },
+      {
+        "name": "PRI",
+        "rate": 11.76
+      },
+      {
+        "name": "DUO",
+        "rate": 7.69
+      },
+      {
+        "name": "TRI",
+        "rate": 6.25
+      },
+      {
+        "name": "TET",
+        "rate": 2
+      },
+      {
+        "name": "PEN",
+        "rate": 0.3
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "name": "Weapon & Armor (Blackstar)",
+    "fsValue": 0.2,
+    "baseRates": [
+      {
+        "name": "+13",
+        "rate": 4
+      },
+      {
+        "name": "+14",
+        "rate": 2.5
+      },
+      {
+        "name": "+15",
+        "rate": 2
+      },
+      {
+        "name": "PRI",
+        "rate": 13.08
+      },
+      {
+        "name": "DUO",
+        "rate": 10.63
+      },
+      {
+        "name": "TRI",
+        "rate": 3.4
+      },
+      {
+        "name": "TET",
+        "rate": 0.51
+      },
+      {
+        "name": "PEN",
+        "rate": 0.2
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "name": "Armor (White, Blue, Yellow)",
+    "fsValue": 0.5,
+    "baseRates": [
+      {
+        "name": "+13",
+        "rate": 4
+      },
+      {
+        "name": "+14",
+        "rate": 2.86
+      },
+      {
+        "name": "+15",
+        "rate": 2
+      },
+      {
+        "name": "PRI",
+        "rate": 11.76
+      },
+      {
+        "name": "DUO",
+        "rate": 7.69
+      },
+      {
+        "name": "TRI",
+        "rate": 6.25
+      },
+      {
+        "name": "TET",
+        "rate": 2
+      },
+      {
+        "name": "PEN",
+        "rate": 0.3
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "name": "Armor (Fallen God)",
+    "fsValue": 0.2,
+    "baseRates": [
+      {
+        "name": "PRI",
+        "rate": 2
+      },
+      {
+        "name": "DUO",
+        "rate": 1
+      },
+      {
+        "name": "TRI",
+        "rate": 0.5
+      },
+      {
+        "name": "TET",
+        "rate": 0.2
+      },
+      {
+        "name": "PEN",
+        "rate": 0.03
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "name": "Life Tool (Loggia, Geranoa)",
+    "fsValue": 0.5,
+    "baseRates": [
+      {
+        "name": "+13",
+        "rate": 4
+      },
+      {
+        "name": "+14",
+        "rate": 2.5
+      },
+      {
+        "name": "+15",
+        "rate": 2
+      },
+      {
+        "name": "PRI",
+        "rate": 11.76
+      },
+      {
+        "name": "DUO",
+        "rate": 7.69
+      },
+      {
+        "name": "TRI",
+        "rate": 6.25
+      },
+      {
+        "name": "TET",
+        "rate": 2
+      },
+      {
+        "name": "PEN",
+        "rate": 0.3
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "name": "Life Tool (Manos)",
+    "fsValue": 0.2,
+    "baseRates": [
+      {
+        "name": "+13",
+        "rate": 4
+      },
+      {
+        "name": "+14",
+        "rate": 2.5
+      },
+      {
+        "name": "+15",
+        "rate": 2
+      },
+      {
+        "name": "PRI",
+        "rate": 11.76
+      },
+      {
+        "name": "DUO",
+        "rate": 7.69
+      },
+      {
+        "name": "TRI",
+        "rate": 6.25
+      },
+      {
+        "name": "TET",
+        "rate": 2
+      },
+      {
+        "name": "PEN",
+        "rate": 0.3
+      }
+    ]
+  },
+  {
+    "id": 7,
+    "name": "Silver Embroidered Clothes",
+    "fsValue": 0.5,
+    "baseRates": [
+      {
+        "name": "+1",
+        "rate": 30
+      },
+      {
+        "name": "+2",
+        "rate": 10
+      },
+      {
+        "name": "+3",
+        "rate": 7.5
+      },
+      {
+        "name": "+4",
+        "rate": 2.5
+      },
+      {
+        "name": "+5",
+        "rate": 0.5
+      }
+    ]
+  },
+  {
+    "id": 8,
+    "name": "Tuvala (Weapon, Armor)",
+    "fsValue": 0.5,
+    "baseRates": [
+      {
+        "name": "+13",
+        "rate": 15
+      },
+      {
+        "name": "+14",
+        "rate": 10
+      },
+      {
+        "name": "+15",
+        "rate": 8
+      },
+      {
+        "name": "PRI",
+        "rate": 17
+      },
+      {
+        "name": "DUO",
+        "rate": 12
+      },
+      {
+        "name": "TRI",
+        "rate": 8
+      },
+      {
+        "name": "TET",
+        "rate": 5
+      },
+      {
+        "name": "PEN",
+        "rate": 3
+      }
+    ]
+  },
+  {
+    "id": 9,
+    "name": "Tuvala (Accessory)",
+    "fsValue": 0.5,
+    "baseRates": [
+      {
+        "name": "PRI",
+        "rate": 70
+      },
+      {
+        "name": "DUO",
+        "rate": 50
+      },
+      {
+        "name": "TRI",
+        "rate": 40
+      },
+      {
+        "name": "TET",
+        "rate": 30
+      },
+      {
+        "name": "PEN",
+        "rate": 20
+      }
+    ]
+  },
+  {
+    "id": 10,
+    "name": "Loggia (Accessory)",
+    "fsValue": 0,
+    "baseRates": [
+      {
+        "name": "PRI",
+        "rate": 70
+      },
+      {
+        "name": "DUO",
+        "rate": 40
+      },
+      {
+        "name": "TRI",
+        "rate": 30
+      },
+      {
+        "name": "TET",
+        "rate": 20
+      },
+      {
+        "name": "PEN",
+        "rate": 10
+      }
+    ]
+  },
+  {
+    "id": 11,
+    "name": "Geranoa (Accessory)",
+    "fsValue": 0,
+    "baseRates": [
+      {
+        "name": "PRI",
+        "rate": 70
+      },
+      {
+        "name": "DUO",
+        "rate": 45
+      },
+      {
+        "name": "TRI",
+        "rate": 30
+      },
+      {
+        "name": "TET",
+        "rate": 18
+      },
+      {
+        "name": "PEN",
+        "rate": 8
+      }
+    ]
+  },
+  {
+    "id": 12,
+    "name": "Manos (Accessory)",
+    "fsValue": 0,
+    "baseRates": [
+      {
+        "name": "PRI",
+        "rate": 75
+      },
+      {
+        "name": "DUO",
+        "rate": 45
+      },
+      {
+        "name": "TRI",
+        "rate": 30
+      },
+      {
+        "name": "TET",
+        "rate": 15
+      },
+      {
+        "name": "PEN",
+        "rate": 5
+      }
+    ]
+  },
+  {
+    "id": 13,
+    "name": "Loggia (Clothes)",
+    "fsValue": 0,
+    "baseRates": [
+      {
+        "name": "+13",
+        "rate": 35
+      },
+      {
+        "name": "+14",
+        "rate": 30
+      },
+      {
+        "name": "+15",
+        "rate": 20
+      },
+      {
+        "name": "PRI",
+        "rate": 50
+      },
+      {
+        "name": "DUO",
+        "rate": 40
+      },
+      {
+        "name": "TRI",
+        "rate": 30
+      },
+      {
+        "name": "TET",
+        "rate": 20
+      },
+      {
+        "name": "PEN",
+        "rate": 10
+      }
+    ]
+  },
+  {
+    "id": 14,
+    "name": "Geranoa (Clothes)",
+    "fsValue": 0,
+    "baseRates": [
+      {
+        "name": "+13",
+        "rate": 35
+      },
+      {
+        "name": "+14",
+        "rate": 30
+      },
+      {
+        "name": "+15",
+        "rate": 20
+      },
+      {
+        "name": "PRI",
+        "rate": 35
+      },
+      {
+        "name": "DUO",
+        "rate": 30
+      },
+      {
+        "name": "TRI",
+        "rate": 25
+      },
+      {
+        "name": "TET",
+        "rate": 20
+      },
+      {
+        "name": "PEN",
+        "rate": 10
+      }
+    ]
+  },
+  {
+    "id": 15,
+    "name": "Manos (Clothes)",
+    "fsValue": 0,
+    "baseRates": [
+      {
+        "name": "+13",
+        "rate": 20
+      },
+      {
+        "name": "+14",
+        "rate": 15
+      },
+      {
+        "name": "+15",
+        "rate": 10
+      },
+      {
+        "name": "PRI",
+        "rate": 30
+      },
+      {
+        "name": "DUO",
+        "rate": 25
+      },
+      {
+        "name": "TRI",
+        "rate": 20
+      },
+      {
+        "name": "TET",
+        "rate": 15
+      },
+      {
+        "name": "PEN",
+        "rate": 6
+      }
+    ]
+  }
+]
