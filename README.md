@@ -6,6 +6,11 @@ A small web app containing various convenient tools for GamezBD's users.
 npm install
 ```
 
+## Setup environment variables, see .env.local.example file
+```
+https://github.com/fawazahmed0/cloudflare-multi-cors-proxy
+```
+
 ### Compiles and hot-reloads for development
 ```
 npm run serve

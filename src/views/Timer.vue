@@ -11,8 +11,8 @@
         <span class="font-normal">{{ clock.isDay ? clockTime(clock.secsUntilNightStart) : clockTime(clock.secsUntilNightEnd) }}</span> <br />
         Daily reset in: <span class="font-normal"> {{ clockTime(clock.secsUntilDailyReset) }} </span><br />
         Imperial reset in:
-        <span class="font-normal"> {{ clockTime(clock.secsUntilImperialResetNA) }} (NA), {{ clockTime(clock.secsUntilImperialResetEU) }} (EU) </span>
-        <span class="text-sm text-red-500">&nbsp;Experimental!</span><br />
+        <span class="font-normal"> {{ clockTime(clock.secsUntilImperialResetNA) }} (NA), {{ clockTime(clock.secsUntilImperialResetEU) }} (EU) </span
+        ><br />
         Black spirit dice game reset in: <span class="font-normal">{{ clockTime(clock.secsUntilJumanjiReset) }}</span> <br />
         Next Vell spawns in:
         <span class="font-normal">{{ clockTime(clock.secsUntilVellSpawnNA) }} (NA), {{ clockTime(clock.secsUntilVellSpawnEU) }} (EU)</span>
@@ -20,13 +20,17 @@
         <br />
         <label class="text-sm font-bold text-gray-600">NA Server</label> <br />
         Status:
-        <span :class="serverStat.statusNA.label === 'up' ? 'text-green-500' : 'text-red-600'" class="mr-8">{{ serverStat.statusNA.label }}</span>
+        <span :class="serverStat.statusNA.label === 'up' ? 'text-green-500' : 'text-red-600'" class="mr-8 font-normal">{{
+          serverStat.statusNA.label
+        }}</span>
         {{ serverStat.statusNA.label === "up" ? "Online" : "Offline" }} duration: <span class="font-normal">{{ serverStat.statusNA.duration }}</span>
         <br />
 
         <label class="text-sm font-bold text-gray-600">EU Server</label> <br />
         Status:
-        <span :class="serverStat.statusEU.label === 'up' ? 'text-green-500' : 'text-red-600'" class="mr-8">{{ serverStat.statusEU.label }}</span>
+        <span :class="serverStat.statusEU.label === 'up' ? 'text-green-500' : 'text-red-600'" class="mr-8 font-normal">{{
+          serverStat.statusEU.label
+        }}</span>
         {{ serverStat.statusEU.label === "up" ? "Online" : "Offline" }} duration: <span class="font-normal">{{ serverStat.statusEU.duration }}</span>
       </p>
     </div>
@@ -38,16 +42,18 @@
         <label class="text-sm font-bold text-gray-600">This Weekend</label> <br />
         <span v-html="weekendEvents[thisWeekIndex].detail"></span> <br />
         Estimate:
-        {{
-          weekendEvents[thisWeekIndex].isActive
-            ? `duration ${clockTime(weekendEvents[thisWeekIndex].duration)}, ends in ${clockTime(weekendEvents[thisWeekIndex].time)}`
-            : `starts in ${clockTime(weekendEvents[thisWeekIndex].time)}`
-        }}
+        <span v-if="weekendEvents[thisWeekIndex].isActive">
+          duration <span class="font-normal"> {{ clockTime(weekendEvents[thisWeekIndex].duration) }} </span>, ends in
+          <span class="font-normal"> {{ clockTime(weekendEvents[thisWeekIndex].time) }} </span>
+        </span>
+        <span v-else>
+          starts in <span class="font-normal"> {{ clockTime(weekendEvents[thisWeekIndex].time) }} </span>
+        </span>
         <br />
         <br />
         <label class="text-sm font-bold text-gray-600">Next Weekend</label> <br />
         <span v-html="weekendEvents[nextWeekIndex].detail"></span> <br />
-        Estimate: {{ `starts in ${clockTime(weekendEvents[nextWeekIndex].time)}` }}
+        Estimate: starts in <span class="font-normal"> {{ clockTime(weekendEvents[nextWeekIndex].time) }} </span>
         <br />
         <br />
         <span class="text-sm"
@@ -97,8 +103,7 @@ export default {
           fetch(EUArsha).then((response) => response.json()),
         ]);
 
-        serverStat.statusNA = await dataNA.monitor.logs[0];
-        serverStat.statusEU = await dataEU.monitor.logs[0];
+        [serverStat.statusNA, serverStat.statusEU] = await Promise.all([dataNA.monitor.logs[0], dataEU.monitor.logs[0]]);
         updateCountdowns();
       } catch (err) {
         console.log(err);
@@ -109,8 +114,8 @@ export default {
       var baseTick = 4444.444444;
       setInterval(updateClockActive, baseTick);
       setInterval(updateClock, baseTick * 6);
-      setInterval(updateCountdowns, 20 * 1000);
-      setInterval(updateWeekendEvent, 1000);
+      setInterval(updateCountdowns, 5 * 1000);
+      setInterval(updateWeekendEvent, 5 * 1000);
       updateClock();
       updateCountdowns();
       updateWeekendEvent();

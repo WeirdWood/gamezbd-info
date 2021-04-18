@@ -4,10 +4,12 @@
       <h6 class="text-xl font-normal leading-normal mt-0 mb-6 text-gray-800">
         Current Server Events
       </h6>
-      <p v-for="(event, index) in eventArr" :key="index" class="mb-6 leading-loose font-light text-gray-800">
-        <label class="font-normal"> {{ event.title }} </label> <br />
-        Event period:{{ event.period ? event.period : "Unknown" }} <br />
-        <a :href="event.url" class="text-blue-600" target="_blank" rel="noopener noreferrer"> {{ event.url }} </a>
+      <p v-for="(event, index) in eventArr" :key="index" class="mb-8 leading-loose font-light text-gray-800">
+        <label class="font-normal">
+          <a :href="event.link" class="text-blue-600" target="_blank" rel="noopener noreferrer"> {{ event.title }} </a>
+        </label>
+        <br />
+        <span v-html="filterSnippet(event['content:encodedSnippet'], event.title, 200)"></span>
       </p>
       <p v-if="eventArr.length === 0" class="mb-6 leading-loose text-gray-800">No active event.</p>
       <div class="flex justify-end">
@@ -26,9 +28,12 @@
       <h6 class="text-xl font-normal leading-normal mt-0 mb-6 text-gray-800">
         Patch Logs
       </h6>
-      <p v-for="(patch, index) in patchArr" :key="index" class="mb-6 leading-loose font-light text-gray-800">
-        <label class="font-normal"> {{ patch.title }} </label> <br />
-        <a :href="patch.url" class="text-blue-600" target="_blank" rel="noopener noreferrer"> {{ patch.url }} </a>
+      <p v-for="(patch, index) in patchArr" :key="index" class="mb-8 leading-loose font-light text-gray-800">
+        <label class="font-normal">
+          <a :href="patch.link" class="text-blue-600" target="_blank" rel="noopener noreferrer"> {{ patch.title }} </a>
+        </label>
+        <br />
+        <span v-html="filterSnippet(patch['content:encodedSnippet'], patch.title, 200)"></span>
       </p>
       <p v-if="patchArr.length === 0" class="mb-6 leading-loose text-gray-800">No patch log.</p>
       <div class="flex justify-end">
@@ -53,6 +58,7 @@
 
 <script>
 import { ref, onBeforeMount } from "vue";
+import Parser from "rss-parser";
 import miscInfoData from "../database/miscInfo.json";
 
 export default {
@@ -65,76 +71,51 @@ export default {
       try {
         //Using a cors proxy deployed on Cloudflare Worker, sources here https://github.com/fawazahmed0/cloudflare-multi-cors-proxy
         //My proxy is strictly whitelisted to only the main site, use a different one on develepment
-        var addrArr = ["https://forum.gameznetwork.com/forums/black-desert-events.427/", "https://forum.gameznetwork.com/forums/patch-notes.408/"];
-        const response = await fetch("https://small-surf-79d4.zbd-info.workers.dev", {
+        const eventRss = "https://forum.gameznetwork.com/forums/black-desert-events.427/index.rss?prefix_id=89";
+        const patchRss = "https://forum.gameznetwork.com/forums/patch-notes.408/index.rss";
+        var addrArr = [eventRss, patchRss];
+        const response = await fetch(process.env.VUE_APP_CORS_SERVER, {
           method: "POST",
           body: JSON.stringify(addrArr),
         });
         var data = await response.text();
-        data = data.replace(/\s+/g, " ");
 
-        patchArr.value = getPatchData(data);
-        eventArr.value = getEventData(data);
+        let eventSplitStr = `<a class='multicorsproxy' href='${eventRss}'>true</a>`;
+        let patchSplitStr = `<a class='multicorsproxy' href='${patchRss}'>true</a>`;
+        let eventXMLStart = data.lastIndexOf(eventSplitStr);
+        let patchXMLStart = data.lastIndexOf(patchSplitStr);
+        var eventXML, patchXML;
+        if (eventXMLStart < patchXMLStart) {
+          eventXML = data.substring(eventXMLStart + eventSplitStr.length, patchXMLStart);
+          patchXML = data.substring(patchXMLStart + patchSplitStr.length);
+        } else {
+          patchXML = data.substring(patchXMLStart + patchSplitStr.length, eventXMLStart);
+          eventXML = data.substring(eventXMLStart + eventSplitStr.length);
+        }
 
-        if (eventArr.value.length) {
-          var eventPreviewLinks = [];
-          eventArr.value.forEach((element) => {
-            eventPreviewLinks.push(`${element.url}preview`);
-          });
+        const parser = new Parser();
 
-          const previewsResponse = await fetch("https://small-surf-79d4.zbd-info.workers.dev", {
-            method: "POST",
-            body: JSON.stringify(eventPreviewLinks),
-          });
-          var previewsData = await previewsResponse.text();
-          previewsData = previewsData.replace(/\s+/g, " ");
-          var previewsDataArr = previewsData.split("<a class='multicorsproxy'");
-          previewsDataArr = previewsDataArr.slice(1);
+        if (eventXML) {
+          let eventData = await parser.parseString(eventXML);
+          eventArr.value = eventData.items;
+        }
 
-          var linkPattern = new RegExp("href='(.*?)'");
-          var previewPattern = new RegExp(`<blockquote class="previewText">(.*?)</blockquote>`);
-          var eventPeriodPattern = new RegExp("Event period:(.*?)<br");
-          previewsDataArr.forEach((previewString) => {
-            var eventUrl = linkPattern.exec(previewString)[1];
-            eventArr.value.forEach((eventObj, index) => {
-              if (eventUrl === `${eventObj.url}preview`) {
-                let tmp = previewPattern.exec(previewString)[1];
-                eventArr.value[index].period = eventPeriodPattern.exec(tmp)[1];
-              }
-            });
-          });
+        if (patchXML) {
+          let patchData = await parser.parseString(patchXML);
+          patchArr.value = patchData.items.slice(0, 5);
         }
       } catch (err) {
         console.log(err);
       }
-
-      function getUrlData(filteredData) {
-        let array = /href="(.*?)"(?:.*?)>(.+)/.exec(filteredData);
-        return { url: `https://forum.gameznetwork.com/${array[1]}`, title: array[2] };
-      }
-
-      function getPatchData(data) {
-        var patchPattern = new RegExp("Patch Notes</span></a> <a (.*?)</a>", "g");
-        var patchData = [];
-
-        for (let i = 0; i < 5; i++) {
-          patchData.push(getUrlData(patchPattern.exec(data)[1]));
-        }
-        return patchData;
-      }
-
-      function getEventData(data) {
-        var eventPattern = new RegExp("Open</span></a> <a (.*?)</a>", "g");
-        var eventData = [];
-        let tmp;
-        while ((tmp = eventPattern.exec(data)) !== null) {
-          eventData.push(getUrlData(tmp[1]));
-        }
-        return eventData;
-      }
     });
 
-    return { eventArr, patchArr, miscArr };
+    function filterSnippet(snippet, title, size) {
+      let result = snippet.replaceAll(title, "");
+      if (result.length <= size) return result;
+      else return result.substr(0, size) + "...";
+    }
+
+    return { eventArr, patchArr, miscArr, filterSnippet };
   },
 };
 </script>
