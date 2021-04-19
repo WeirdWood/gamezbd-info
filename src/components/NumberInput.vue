@@ -10,19 +10,23 @@
       :name="id"
       :id="id"
       :value="value"
-      class="px-3 py-3 border-gray-400 placeholder-gray-400 text-gray-700 bg-white rounded text-sm focus:outline-none focus:ring w-full md:w-64"
+      class="px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm focus:outline-none focus:ring w-full md:w-64"
+      :class="{'border-gray-200': disabled, 'border-gray-400': !disabled}"
       style="transition: all 0.15s ease 0s;"
       @input="refresh($event.target.value)"
       @blur="onBlurNumber"
       ref="numberInput"
+      :disabled="disabled"
     />
     <input
       v-show="visible === false"
       type="text"
       v-model="stringValue"
-      class="px-3 py-3 border-gray-400 placeholder-gray-400 text-gray-700 bg-white rounded text-sm focus:outline-none focus:ring w-full md:w-64"
+      class="px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm focus:outline-none focus:ring w-full md:w-64"
+      :class="{'border-gray-200': disabled, 'border-gray-400': !disabled}"
       style="transition: all 0.15s ease 0s;"
       @focus="onFocusText"
+      :disabled="disabled"
     />
   </div>
 </template>
@@ -39,8 +43,9 @@ export default {
       type: Boolean,
       default: false,
     },
-    keyUp: {
-      type: Object,
+    disabled: {
+      type: Boolean,
+      default: false,
       required: false,
     },
   },

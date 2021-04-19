@@ -111,7 +111,7 @@
                 </th>
               </tr>
             </thead>
-            <tbody class="border">
+            <tbody class="border" :key="reRender">
               <tr v-for="(baseRate, index) in itemTypes[formValues.itemTypeId].baseRates" :key="index">
                 <th class="px-2 sm:px-4 align-middle text-xs whitespace-nowrap p-4 text-left uppercase">
                   {{ baseRate.name }}
@@ -142,6 +142,7 @@ export default {
     });
     const itemTypes = reactive(itemTypeData);
     const fsInput = ref(null);
+    const reRender = ref(0);
 
     onMounted(() => fsInput.value.focus());
 
@@ -173,12 +174,16 @@ export default {
       }
     );
 
+    watch(() => formValues.itemTypeId, () => {
+      reRender.value++;
+    })
+
     const finalBonus = computed(() => {
       let multiplier = 1 + (formValues.premium ? 0.3 : 0) + (formValues.event ? 0.2 : 0);
       return formValues.failstack * itemTypes[formValues.itemTypeId].fsValue * multiplier;
     });
 
-    return { itemTypes, formValues, clearForm, round, finalBonus, fsInput, simulate };
+    return { itemTypes, formValues, clearForm, round, finalBonus, fsInput, simulate, reRender };
   },
 };
 </script>

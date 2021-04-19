@@ -51,21 +51,7 @@
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <number-input :id="'fame'" :label="'Enter Family Fame'" :fieldName="'fame'" :value="formValues.fame" @update="sync" />
-            <div>
-              <label class="block text-gray-600 text-sm font-bold mb-2 select-none" for="itemType">
-                Silver collection percent
-              </label>
-              <input
-                type="number"
-                min="0"
-                name="fame"
-                id="fame"
-                v-model="collectPercent"
-                class="px-3 py-3 border-gray-200 placeholder-gray-400 text-gray-700 bg-white rounded text-sm focus:outline-none focus:ring w-full md:w-64"
-                style="transition: all 0.15s ease 0s;"
-                disabled
-              />
-            </div>
+            <number-input :id="'collectPercent'" :label="'Silver collection percent'" :value="collectPercent" :disabled="true" />
             <number-input :id="'buyPrice'" :label="'Buy Price'" :fieldName="'buyPrice'" :value="formValues.buyPrice" @update="sync" />
             <number-input :id="'sellPrice'" :label="'Sell Price'" :fieldName="'sellPrice'" :value="formValues.sellPrice" @update="sync" />
             <number-input :id="'amount'" :label="'Amount'" :fieldName="'amount'" :value="formValues.amount" @update="onAmountUpdate" />
@@ -77,6 +63,13 @@
               :negatable="true"
               @update="onSilverUpdate"
             />
+            <number-input
+              :id="'silverLost'"
+              :label="'Silver lost to tax'"
+              :value="formValues.silverLostPerItem * formValues.amount"
+              :disabled="true"
+            />
+            <number-input :id="'silverLostPerItem'" :label="'Silver lost per item'" :value="formValues.silverLostPerItem" :disabled="true" />
           </div>
         </form>
       </div>
@@ -101,6 +94,7 @@ export default {
       sellPrice: "0",
       amount: "1",
       silver: "0",
+      silverLostPerItem: "0",
       customSilver: false,
     });
 
@@ -128,6 +122,7 @@ export default {
         if (isFinite(result)) formValues.silver = Math.round(result);
         else formValues.silver = 0;
       }
+      formValues.silverLostPerItem = Math.round((formValues.sellPrice * (1 - collectPercent.value * 0.01) + Number.EPSILON) * 100) / 100;
     }
 
     function sync(args) {

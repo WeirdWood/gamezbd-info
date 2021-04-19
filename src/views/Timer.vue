@@ -104,7 +104,9 @@ export default {
           fetch(corsServer + EUArsha).then((response) => response.json()),
         ]);
 
-        [serverStat.statusNA, serverStat.statusEU] = await Promise.all([dataNA.monitor.logs[0], dataEU.monitor.logs[0]]);
+        let NAlog = dataNA.monitor.logs[0].label === "up" ? dataNA.monitor.logs[0] : dataNA.monitor.logs[1];
+        let EUlog = dataEU.monitor.logs[0].label === "up" ? dataEU.monitor.logs[0] : dataEU.monitor.logs[1];
+        [serverStat.statusNA, serverStat.statusEU] = [NAlog, EUlog];
         updateCountdowns();
       } catch (err) {
         console.log(err);
@@ -121,7 +123,9 @@ export default {
         let [dataNA, dataEU] = splitResponse(data, [NASplitStr, EUSplitStr]);
         dataNA = JSON.parse(dataNA);
         dataEU = JSON.parse(dataEU);
-        [serverStat.statusNA, serverStat.statusEU] = [dataNA.monitor.logs[0], dataEU.monitor.logs[0]];
+        let NAlog = dataNA.monitor.logs[0].label === "up" ? dataNA.monitor.logs[0] : dataNA.monitor.logs[1];
+        let EUlog = dataEU.monitor.logs[0].label === "up" ? dataEU.monitor.logs[0] : dataEU.monitor.logs[1];
+        [serverStat.statusNA, serverStat.statusEU] = [NAlog, EUlog];
         updateCountdowns();
       }
     });
