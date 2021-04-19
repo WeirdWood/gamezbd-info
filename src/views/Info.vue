@@ -82,16 +82,7 @@ export default {
 
         let eventSplitStr = `<a class='multicorsproxy' href='${eventRss}'>true</a>`;
         let patchSplitStr = `<a class='multicorsproxy' href='${patchRss}'>true</a>`;
-        let eventXMLStart = data.lastIndexOf(eventSplitStr);
-        let patchXMLStart = data.lastIndexOf(patchSplitStr);
-        var eventXML, patchXML;
-        if (eventXMLStart < patchXMLStart) {
-          eventXML = data.substring(eventXMLStart + eventSplitStr.length, patchXMLStart);
-          patchXML = data.substring(patchXMLStart + patchSplitStr.length);
-        } else {
-          patchXML = data.substring(patchXMLStart + patchSplitStr.length, eventXMLStart);
-          eventXML = data.substring(eventXMLStart + eventSplitStr.length);
-        }
+        var [eventXML, patchXML] = splitResponse(data, [eventSplitStr, patchSplitStr]);
 
         const parser = new Parser();
 
@@ -113,6 +104,20 @@ export default {
       let result = snippet.replaceAll(title, "");
       if (result.length <= size) return result;
       else return result.substr(0, size) + "...";
+    }
+
+    function splitResponse(data, splitStr) {
+      let firstStart = data.lastIndexOf(splitStr[0]);
+      let secondStart = data.lastIndexOf(splitStr[1]);
+      var firstData, secondData;
+      if (firstStart < secondStart) {
+        firstData = data.substring(firstStart + splitStr[0].length, secondStart);
+        secondData = data.substring(secondStart + splitStr[1].length);
+      } else {
+        secondData = data.substring(secondStart + splitStr[1].length, firstStart);
+        firstData = data.substring(firstStart + splitStr[0].length);
+      }
+      return [firstData, secondData];
     }
 
     return { eventArr, patchArr, miscArr, filterSnippet };

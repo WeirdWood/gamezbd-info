@@ -70,8 +70,9 @@
 import { onMounted, reactive, computed, onBeforeMount, ref } from "vue";
 import weekendEventData from "../database/weekendEvent.json";
 
-const NAArsha = "https://cors.bridged.cc/https://status.gamezbd.net/api/getMonitor/7DMKmfmWE6?m=784986430";
-const EUArsha = "https://cors.bridged.cc/https://status.gamezbd.net/api/getMonitor/7DMKmfmWE6?m=784986451";
+const NAArsha = "https://status.gamezbd.net/api/getMonitor/7DMKmfmWE6?m=784986430";
+const EUArsha = "https://status.gamezbd.net/api/getMonitor/7DMKmfmWE6?m=784986451";
+const corsServer = "https://cors.bridged.cc/";
 
 export default {
   setup() {
@@ -99,14 +100,29 @@ export default {
     onBeforeMount(async () => {
       try {
         const [dataNA, dataEU] = await Promise.all([
-          fetch(NAArsha).then((response) => response.json()),
-          fetch(EUArsha).then((response) => response.json()),
+          fetch(corsServer + NAArsha).then((response) => response.json()),
+          fetch(corsServer + EUArsha).then((response) => response.json()),
         ]);
 
         [serverStat.statusNA, serverStat.statusEU] = await Promise.all([dataNA.monitor.logs[0], dataEU.monitor.logs[0]]);
         updateCountdowns();
       } catch (err) {
         console.log(err);
+
+        //Backup in case Bridged's service goes down
+        var addrArr = [NAArsha, EUArsha];
+        const response = await fetch(process.env.VUE_APP_CORS_SERVER, {
+          method: "POST",
+          body: JSON.stringify(addrArr),
+        });
+        var data = await response.text();
+        let NASplitStr = `<a class='multicorsproxy' href='${NAArsha}'>true</a>`;
+        let EUSplitStr = `<a class='multicorsproxy' href='${EUArsha}'>true</a>`;
+        let [dataNA, dataEU] = splitResponse(data, [NASplitStr, EUSplitStr]);
+        dataNA = JSON.parse(dataNA);
+        dataEU = JSON.parse(dataEU);
+        [serverStat.statusNA, serverStat.statusEU] = [dataNA.monitor.logs[0], dataEU.monitor.logs[0]];
+        updateCountdowns();
       }
     });
 
@@ -251,6 +267,20 @@ export default {
         d.setUTCDate(d.getUTCDate() + 7);
       }
       return d;
+    }
+
+    function splitResponse(data, splitStr) {
+      let firstStart = data.lastIndexOf(splitStr[0]);
+      let secondStart = data.lastIndexOf(splitStr[1]);
+      var firstData, secondData;
+      if (firstStart < secondStart) {
+        firstData = data.substring(firstStart + splitStr[0].length, secondStart);
+        secondData = data.substring(secondStart + splitStr[1].length);
+      } else {
+        secondData = data.substring(secondStart + splitStr[1].length, firstStart);
+        firstData = data.substring(firstStart + splitStr[0].length);
+      }
+      return [firstData, secondData];
     }
 
     const ampm = computed(() => (clock.inGameHour < 12 ? "AM" : "PM"));
