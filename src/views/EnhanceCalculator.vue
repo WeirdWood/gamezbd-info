@@ -90,29 +90,35 @@
             <thead>
               <tr>
                 <th
-                  class="px-3 sm:px-6 bg-gray-100 text-gray-500 align-middle border border-solid border-gray-200 py-3 text-xs uppercase border-r-0 whitespace-nowrap font-medium text-left"
+                  class="px-2 sm:px-4 bg-gray-100 text-gray-500 align-middle border border-solid border-gray-200 py-3 text-xs uppercase border-r-0 whitespace-nowrap font-medium text-left"
                 >
                   Grade
                 </th>
                 <th
-                  class="px-3 sm:px-6 bg-gray-100 text-gray-500 align-middle border border-solid border-gray-200 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-medium text-left"
+                  class="px-2 sm:px-4 hidden sm:block bg-gray-100 text-gray-500 align-middle border border-solid border-gray-200 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-medium text-left"
                 >
                   Base chance
                 </th>
                 <th
-                  class="px-3 sm:px-6 bg-gray-100 text-gray-500 align-middle border border-solid border-gray-200 py-3 text-xs uppercase border-l-0 whitespace-nowrap font-medium text-left"
+                  class="px-2 sm:px-4 bg-gray-100 text-gray-500 align-middle border border-solid border-gray-200 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-medium text-left"
                 >
                   Success rate
+                </th>
+                <th
+                  class="px-2 sm:px-4 bg-gray-100 text-gray-500 align-middle border border-solid border-gray-200 py-3 text-xs uppercase border-l-0 whitespace-nowrap font-medium text-left"
+                >
+                  Simulate
                 </th>
               </tr>
             </thead>
             <tbody class="border">
               <tr v-for="(baseRate, index) in itemTypes[formValues.itemTypeId].baseRates" :key="index">
-                <th class="px-3 sm:px-6 align-middle text-xs whitespace-nowrap p-4 text-left uppercase">
+                <th class="px-2 sm:px-4 align-middle text-xs whitespace-nowrap p-4 text-left uppercase">
                   {{ baseRate.name }}
                 </th>
-                <td class="px-3 sm:px-6 align-middle text-xs whitespace-nowrap p-4 text-left uppercase">{{ baseRate.rate }}%</td>
-                <td class="px-3 sm:px-6 align-middle text-xs whitespace-nowrap p-4 text-left uppercase">{{ round(baseRate.rate + finalBonus) }}%</td>
+                <td class="px-2 sm:px-4 hidden sm:block align-middle text-xs whitespace-nowrap p-4 text-left uppercase">{{ baseRate.rate }}%</td>
+                <td class="px-2 sm:px-4 align-middle text-xs whitespace-nowrap p-4 text-left uppercase">{{ round(baseRate.rate + finalBonus) }}%</td>
+                <td class="px-2 sm:px-4 align-middle text-xs whitespace-nowrap p-2 text-left uppercase"> <button class="p-2 bg-white active:bg-gray-200 border w-full rounded hover:shadow-sm outline-none cursor-pointer focus:outline-none ease-linear transition-all duration-150" @click="simulate(baseRate.rate + finalBonus, $event.target)"> Simulate </button></td>
               </tr>
             </tbody>
           </table>
@@ -150,6 +156,13 @@ export default {
       return Math.round((number + Number.EPSILON) * 100) / 100;
     }
 
+    function simulate(rate, e) {
+      if(Math.random() <= (rate * 0.01)) {
+        e.innerHTML = `<span class="text-green-500">Success</span>`;
+      }
+      else e.innerHTML = `<span class="text-red-600">Fail</span>`;
+    }
+
     watch(
       () => formValues.failstack,
       () => {
@@ -165,7 +178,7 @@ export default {
       return formValues.failstack * itemTypes[formValues.itemTypeId].fsValue * multiplier;
     });
 
-    return { itemTypes, formValues, clearForm, round, finalBonus, fsInput };
+    return { itemTypes, formValues, clearForm, round, finalBonus, fsInput, simulate };
   },
 };
 </script>
