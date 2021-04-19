@@ -1,4 +1,6 @@
-import { createRouter, createWebHashHistory } from "vue-router";
+import { createRouter, createWebHistory } from "vue-router";
+import Timer from "../views/Timer.vue";
+import NotFound from "../views/NotFound.vue";
 
 const routes = [
   {
@@ -13,7 +15,7 @@ const routes = [
   {
     path: "/timer",
     name: "Timer",
-    component: () => import("../views/Timer.vue"),
+    component: Timer,
   },
   {
     path: "/info",
@@ -25,10 +27,14 @@ const routes = [
     name: "Market Calculator",
     component: () => import("../views/MarketCalculator.vue"),
   },
+  {
+    path: "/:catchAll(.*)",
+    component: NotFound,
+  },
 ];
 
 const router = createRouter({
-  history: createWebHashHistory(),
+  history: createWebHistory(),
   routes,
 });
 
