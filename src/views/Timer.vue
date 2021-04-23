@@ -10,9 +10,20 @@
         {{ clock.isDay ? "Night time in:" : "Day time in:" }}
         <span class="font-normal">{{ clock.isDay ? clockTime(clock.secsUntilNightStart) : clockTime(clock.secsUntilNightEnd) }}</span> <br />
         Daily reset in: <span class="font-normal"> {{ clockTime(clock.secsUntilDailyReset) }} </span><br />
-        Imperial reset in:
-        <span class="font-normal"> {{ clockTime(clock.secsUntilImperialResetNA) }} (NA), {{ clockTime(clock.secsUntilImperialResetEU) }} (EU) </span
-        ><br />
+        <span title="Imperial cooking/alchemy delivery">
+          Imperial reset in:
+          <span class="font-normal">
+            {{ clockTime(clock.secsUntilImperialResetNA) }} (NA), {{ clockTime(clock.secsUntilImperialResetEU) }} (EU)
+          </span>
+        </span>
+        <br />
+        <span title="Imperial trading/fishing delivery">
+          Imperial trading reset in:
+          <span class="font-normal">
+            {{ clockTime(clock.secsUntilImperialTradingResetNA) }} (NA), {{ clockTime(clock.secsUntilImperialTradingResetEU) }} (EU)
+          </span>
+        </span>
+        <br />
         Black spirit dice game reset in: <span class="font-normal">{{ clockTime(clock.secsUntilJumanjiReset) }}</span> <br />
         Next Vell spawns in:
         <span class="font-normal">{{ clockTime(clock.secsUntilVellSpawnNA) }} (NA), {{ clockTime(clock.secsUntilVellSpawnEU) }} (EU)</span>
@@ -85,6 +96,8 @@ export default {
       secsUntilDailyReset: 0,
       secsUntilImperialResetEU: 0,
       secsUntilImperialResetNA: 0,
+      secsUntilImperialTradingResetNA: 0,
+      secsUntilImperialTradingResetEU: 0,
       secsUntilJumanjiReset: 0,
       secsUntilVellSpawnNA: 0,
       secsUntilVellSpawnEU: 0,
@@ -104,9 +117,7 @@ export default {
           fetch(corsServer + EUArsha).then((response) => response.json()),
         ]);
 
-        let NAlog = dataNA.monitor.logs[0].label === "up" ? dataNA.monitor.logs[0] : dataNA.monitor.logs[1];
-        let EUlog = dataEU.monitor.logs[0].label === "up" ? dataEU.monitor.logs[0] : dataEU.monitor.logs[1];
-        [serverStat.statusNA, serverStat.statusEU] = [NAlog, EUlog];
+        [serverStat.statusNA, serverStat.statusEU] = [dataNA.monitor.logs[0], dataEU.monitor.logs[0]];
         updateCountdowns();
       } catch (err) {
         console.log(err);
@@ -123,9 +134,7 @@ export default {
         let [dataNA, dataEU] = splitResponse(data, [NASplitStr, EUSplitStr]);
         dataNA = JSON.parse(dataNA);
         dataEU = JSON.parse(dataEU);
-        let NAlog = dataNA.monitor.logs[0].label === "up" ? dataNA.monitor.logs[0] : dataNA.monitor.logs[1];
-        let EUlog = dataEU.monitor.logs[0].label === "up" ? dataEU.monitor.logs[0] : dataEU.monitor.logs[1];
-        [serverStat.statusNA, serverStat.statusEU] = [NAlog, EUlog];
+        [serverStat.statusNA, serverStat.statusEU] = [dataNA.monitor.logs[0], dataEU.monitor.logs[0]];
         updateCountdowns();
       }
     });
@@ -135,7 +144,7 @@ export default {
       setInterval(updateClockActive, baseTick);
       setInterval(updateClock, baseTick * 6);
       setInterval(updateCountdowns, 5 * 1000);
-      setInterval(updateWeekendEvent, 5 * 1000);
+      setInterval(updateWeekendEvent, 20 * 1000);
       updateClock();
       updateCountdowns();
       updateWeekendEvent();
@@ -145,15 +154,19 @@ export default {
       var d = new Date();
       var startHour = Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), 0, 0, 0, 0);
       var rlDayElapsedS = (Date.now() - startHour) / 1000;
+      let NAelapsed = (Date.now() - serverStat.statusNA.time * 1000) / 1000;
+      let EUelapsed = (Date.now() - serverStat.statusEU.time * 1000) / 1000;
 
       // Midnight UTC
       clock.secsUntilDailyReset = 24 * 60 * 60 - rlDayElapsedS;
 
       // Imperial cooking/alchemy reset is every 3 hours from reset
-      let NAelapsed = (Date.now() - serverStat.statusNA.time * 1000) / 1000;
-      let EUelapsed = (Date.now() - serverStat.statusEU.time * 1000) / 1000;
       clock.secsUntilImperialResetNA = 3 * 60 * 60 - (NAelapsed % (60 * 60 * 3));
       clock.secsUntilImperialResetEU = 3 * 60 * 60 - (EUelapsed % (60 * 60 * 3));
+
+      // Imperial trading reset is every 4 hours from reset
+      clock.secsUntilImperialTradingResetNA = 4 * 60 * 60 - (NAelapsed % (60 * 60 * 4));
+      clock.secsUntilImperialTradingResetEU = 4 * 60 * 60 - (EUelapsed % (60 * 60 * 4));
 
       // Jumani board game reset is at 5am UTC
       clock.secsUntilJumanjiReset = 60 * 60 * 24 - ((rlDayElapsedS - 5 * 60 * 60) % (60 * 60 * 24));

@@ -1,12 +1,12 @@
 <template>
-  <nav class="relative flex flex-wrap items-center justify-between px-2 py-3 bg-gray-500 mb-12">
-    <div class="container px-4 mx-auto flex flex-wrap items-center justify-between">
-      <div class="w-full relative flex justify-between lg:w-auto  px-4 lg:static lg:block lg:justify-start">
+  <nav class="relative flex flex-wrap items-center justify-between px-4 py-3 bg-gray-500 mb-12">
+    <div class="container mx-auto flex flex-wrap items-center justify-between">
+      <div class="w-full relative flex justify-between lg:w-auto lg:static lg:block lg:justify-start">
         <router-link class="text-sm font-bold leading-relaxed inline-block mr-4 py-2 whitespace-nowrap uppercase text-white" to="/">
           GameZBD Info
         </router-link>
         <button
-          class="text-white cursor-pointer text-xl leading-none px-2 border border-solid border-transparent rounded bg-transparent block lg:hidden outline-none focus:outline-none"
+          class="text-white cursor-pointer text-xl leading-none pl-2 border border-solid border-transparent rounded bg-transparent block lg:hidden outline-none focus:outline-none"
           type="button"
           v-on:click="toggleNavbar()"
         >

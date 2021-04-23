@@ -159,9 +159,9 @@ export default {
 
     function simulate(rate, e) {
       if(Math.random() <= (rate * 0.01)) {
-        e.innerHTML = `<span class="text-green-500">Success</span>`;
+        e.innerHTML = `<span class="text-green-500 transition-all">Success</span>`;
       }
-      else e.innerHTML = `<span class="text-red-600">Fail</span>`;
+      else e.innerHTML = `<span class="text-red-600 transition-all">Fail</span>`;
     }
 
     watch(
