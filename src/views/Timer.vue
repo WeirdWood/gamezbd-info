@@ -81,8 +81,8 @@
 import { onMounted, reactive, computed, onBeforeMount, ref } from "vue";
 import weekendEventData from "../database/weekendEvent.json";
 
-const NAArsha = "https://status.gamezbd.net/api/getMonitor/7DMKmfmWE6?m=784986430";
-const EUArsha = "https://status.gamezbd.net/api/getMonitor/7DMKmfmWE6?m=784986451";
+const NAArsha = "https://status.gamezbd.net/api/getMonitor/7DMKmfmWE6?m=784986409";
+const EUArsha = "https://status.gamezbd.net/api/getMonitor/7DMKmfmWE6?m=784986444";
 const corsServer = "https://cors.bridged.cc/";
 
 export default {
