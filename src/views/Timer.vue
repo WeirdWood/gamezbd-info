@@ -10,14 +10,14 @@
         {{ clock.isDay ? "Night time in:" : "Day time in:" }}
         <span class="font-normal">{{ clock.isDay ? clockTime(clock.secsUntilNightStart) : clockTime(clock.secsUntilNightEnd) }}</span> <br />
         Daily reset in: <span class="font-normal"> {{ clockTime(clock.secsUntilDailyReset) }} </span><br />
-        <span title="Imperial cooking/alchemy delivery">
+        <span title="Imperial cooking/alchemy/fishing delivery">
           Imperial reset in:
           <span class="font-normal">
             {{ clockTime(clock.secsUntilImperialResetNA) }} (NA), {{ clockTime(clock.secsUntilImperialResetEU) }} (EU)
           </span>
         </span>
         <br />
-        <span title="Imperial trading/fishing delivery">
+        <span title="Imperial trading delivery">
           Imperial trading reset in:
           <span class="font-normal">
             {{ clockTime(clock.secsUntilImperialTradingResetNA) }} (NA), {{ clockTime(clock.secsUntilImperialTradingResetEU) }} (EU)
