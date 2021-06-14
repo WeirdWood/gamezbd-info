@@ -10,30 +10,16 @@
         {{ clock.isDay ? "Night time in:" : "Day time in:" }}
         <span class="font-normal">{{ clock.isDay ? clockTime(clock.secsUntilNightStart) : clockTime(clock.secsUntilNightEnd) }}</span> <br />
         Daily reset in: <span class="font-normal"> {{ clockTime(clock.secsUntilDailyReset) }} </span><br />
-        <span class="flex items-center" title="Imperial cooking/alchemy delivery">
+        <span class="flex flex-wrap items-center" title="Imperial cooking/alchemy/fishing delivery (every 3 hours)">
           Imperial reset in: &nbsp;
-          <svg v-if="isLoading" class="animate-spin h-4 w-4 text-gray-800" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-            <path
-              class="opacity-75"
-              fill="currentColor"
-              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-            ></path>
-          </svg>
+          <spinner :isLoading="isLoading" />
           <span v-if="!isLoading && !error" class="font-normal">
             {{ clockTime(clock.secsUntilImperialResetNA) }} (NA), {{ clockTime(clock.secsUntilImperialResetEU) }} (EU)
           </span>
         </span>
-        <span class="flex items-center" title="Imperial trading/fishing delivery">
+        <span class="flex flex-wrap items-center" title="Imperial trading delivery (every 4 hours)">
           Imperial trading reset in: &nbsp;
-          <svg v-if="isLoading" class="animate-spin h-4 w-4 text-gray-800" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-            <path
-              class="opacity-75"
-              fill="currentColor"
-              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-            ></path>
-          </svg>
+          <spinner :isLoading="isLoading" />
           <span v-if="!isLoading && !error" class="font-normal">
             {{ clockTime(clock.secsUntilImperialTradingResetNA) }} (NA), {{ clockTime(clock.secsUntilImperialTradingResetEU) }} (EU)
           </span>
@@ -44,16 +30,9 @@
         <br />
         <br />
         <label class="text-sm font-bold text-gray-600">NA Server</label> <br />
-        <span class="flex items-center">
+        <span class="flex flex-wrap items-center">
           Status: &nbsp;
-          <svg v-if="isLoading" class="animate-spin h-4 w-4 text-gray-800" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-            <path
-              class="opacity-75"
-              fill="currentColor"
-              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-            ></path>
-          </svg>
+          <spinner :isLoading="isLoading" />
           <span v-if="!isLoading && !error" :class="serverStat.statusNA.label === 'up' ? 'text-green-500' : 'text-red-600'" class="mr-8 font-normal">
             {{ serverStat.statusNA.label }}
           </span>
@@ -64,16 +43,9 @@
         </span>
 
         <label class="text-sm font-bold text-gray-600">EU Server</label> <br />
-        <span class="flex items-center">
+        <span class="flex flex-wrap items-center">
           Status: &nbsp;
-          <svg v-if="isLoading" class="animate-spin h-4 w-4 text-gray-800" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-            <path
-              class="opacity-75"
-              fill="currentColor"
-              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-            ></path>
-          </svg>
+          <spinner :isLoading="isLoading" />
           <span v-if="!isLoading && !error" :class="serverStat.statusEU.label === 'up' ? 'text-green-500' : 'text-red-600'" class="mr-8 font-normal">
             {{ serverStat.statusEU.label }}
           </span>
@@ -120,6 +92,7 @@
 
 <script>
 import { onMounted, reactive, computed, onBeforeMount, ref } from "vue";
+import Spinner from "../components/Spinner";
 import weekendEventData from "../database/weekendEvent.json";
 
 const NAArsha = "https://status.gamezbd.net/api/getMonitor/7DMKmfmWE6?m=784986409";
@@ -127,6 +100,9 @@ const EUArsha = "https://status.gamezbd.net/api/getMonitor/7DMKmfmWE6?m=78498644
 const corsServer = "https://cors.bridged.cc/";
 
 export default {
+  components: {
+    Spinner,
+  },
   setup() {
     const clock = reactive({
       isDay: false,

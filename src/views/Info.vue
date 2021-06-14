@@ -11,7 +11,9 @@
         <br />
         <span v-html="filterSnippet(event['content:encodedSnippet'], event.title, 200)"></span>
       </p>
-      <p v-if="eventArr.length === 0" class="mb-6 leading-loose text-gray-800">No active event.</p>
+      <spinner :isLoading="isLoading" />
+      <p v-if="eventArr.length === 0 && !isLoading" class="mb-6 leading-loose text-gray-800">No active event.</p>
+      <p v-if="error" class="mb-6 leading-loose text-red-500"> Unable to fetch data, please try again later. </p>
       <div class="flex justify-end">
         <a
           href="https://forum.gameznetwork.com/forums/black-desert-events.427/"
@@ -35,7 +37,9 @@
         <br />
         <span v-html="filterSnippet(patch['content:encodedSnippet'], patch.title, 200)"></span>
       </p>
-      <p v-if="patchArr.length === 0" class="mb-6 leading-loose text-gray-800">No patch log.</p>
+      <spinner :isLoading="isLoading" />
+      <p v-if="patchArr.length === 0 && !isLoading" class="mb-6 leading-loose text-gray-800">No patch log.</p>
+      <p v-if="error" class="mb-6 leading-loose text-red-500"> Unable to fetch data, please try again later. </p>
       <div class="flex justify-end">
         <a href="https://forum.gameznetwork.com/forums/patch-notes.408/" class="text-blue-600 text-sm" target="_blank" rel="noopener noreferrer">
           More info>>
@@ -59,13 +63,19 @@
 <script>
 import { ref, onBeforeMount } from "vue";
 import Parser from "rss-parser";
+import Spinner from "../components/Spinner.vue";
 import miscInfoData from "../database/miscInfo.json";
 
 export default {
+  components: {
+    Spinner
+  },
   setup() {
     const patchArr = ref([]);
     const eventArr = ref([]);
     const miscArr = ref(miscInfoData);
+    const isLoading = ref(true);
+    const error = ref(false);
 
     onBeforeMount(async () => {
       try {
@@ -83,6 +93,7 @@ export default {
         let eventSplitStr = `<a class='multicorsproxy' href='${eventRss}'>true</a>`;
         let patchSplitStr = `<a class='multicorsproxy' href='${patchRss}'>true</a>`;
         var [eventXML, patchXML] = splitResponse(data, [eventSplitStr, patchSplitStr]);
+        isLoading.value = false;
 
         const parser = new Parser();
 
@@ -97,6 +108,7 @@ export default {
         }
       } catch (err) {
         console.log(err);
+        error.value = true;
       }
     });
 
@@ -120,7 +132,7 @@ export default {
       return [firstData, secondData];
     }
 
-    return { eventArr, patchArr, miscArr, filterSnippet };
+    return { eventArr, patchArr, miscArr, isLoading, error, filterSnippet };
   },
 };
 </script>

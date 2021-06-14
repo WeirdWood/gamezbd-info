@@ -10,7 +10,7 @@
           type="button"
           v-on:click="toggleNavbar()"
         >
-          <img src="../assets/cil_hamburger-menu.svg" alt="Menu" class="w-8 h-8">
+          <img src="../assets/cil_hamburger-menu.svg" alt="Menu" class="w-8 h-8" width="32" height="32">
         </button>
       </div>
       <div v-bind:class="{ hidden: !showMenu, flex: showMenu }" class="lg:flex lg:flex-grow items-center">
