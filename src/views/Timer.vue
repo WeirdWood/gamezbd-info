@@ -10,39 +10,80 @@
         {{ clock.isDay ? "Night time in:" : "Day time in:" }}
         <span class="font-normal">{{ clock.isDay ? clockTime(clock.secsUntilNightStart) : clockTime(clock.secsUntilNightEnd) }}</span> <br />
         Daily reset in: <span class="font-normal"> {{ clockTime(clock.secsUntilDailyReset) }} </span><br />
-        <span title="Imperial cooking/alchemy/fishing delivery">
-          Imperial reset in:
-          <span class="font-normal">
+        <span class="flex items-center" title="Imperial cooking/alchemy delivery">
+          Imperial reset in: &nbsp;
+          <svg v-if="isLoading" class="animate-spin h-4 w-4 text-gray-800" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path
+              class="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            ></path>
+          </svg>
+          <span v-if="!isLoading && !error" class="font-normal">
             {{ clockTime(clock.secsUntilImperialResetNA) }} (NA), {{ clockTime(clock.secsUntilImperialResetEU) }} (EU)
           </span>
         </span>
-        <br />
-        <span title="Imperial trading delivery">
-          Imperial trading reset in:
-          <span class="font-normal">
+        <span class="flex items-center" title="Imperial trading/fishing delivery">
+          Imperial trading reset in: &nbsp;
+          <svg v-if="isLoading" class="animate-spin h-4 w-4 text-gray-800" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path
+              class="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            ></path>
+          </svg>
+          <span v-if="!isLoading && !error" class="font-normal">
             {{ clockTime(clock.secsUntilImperialTradingResetNA) }} (NA), {{ clockTime(clock.secsUntilImperialTradingResetEU) }} (EU)
           </span>
         </span>
-        <br />
         Black spirit dice game reset in: <span class="font-normal">{{ clockTime(clock.secsUntilJumanjiReset) }}</span> <br />
         Next Vell spawns in:
         <span class="font-normal">{{ clockTime(clock.secsUntilVellSpawnNA) }} (NA), {{ clockTime(clock.secsUntilVellSpawnEU) }} (EU)</span>
         <br />
         <br />
         <label class="text-sm font-bold text-gray-600">NA Server</label> <br />
-        Status:
-        <span :class="serverStat.statusNA.label === 'up' ? 'text-green-500' : 'text-red-600'" class="mr-8 font-normal">{{
-          serverStat.statusNA.label
-        }}</span>
-        {{ serverStat.statusNA.label === "up" ? "Online" : "Offline" }} duration: <span class="font-normal">{{ serverStat.statusNA.duration }}</span>
-        <br />
+        <span class="flex items-center">
+          Status: &nbsp;
+          <svg v-if="isLoading" class="animate-spin h-4 w-4 text-gray-800" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path
+              class="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            ></path>
+          </svg>
+          <span v-if="!isLoading && !error" :class="serverStat.statusNA.label === 'up' ? 'text-green-500' : 'text-red-600'" class="mr-8 font-normal">
+            {{ serverStat.statusNA.label }}
+          </span>
+          <span v-if="!isLoading && !error">
+            {{ serverStat.statusNA.label === "up" ? "Online" : "Offline" }} duration:
+            <span class="font-normal"> {{ serverStat.statusNA.duration }} </span>
+          </span>
+        </span>
 
         <label class="text-sm font-bold text-gray-600">EU Server</label> <br />
-        Status:
-        <span :class="serverStat.statusEU.label === 'up' ? 'text-green-500' : 'text-red-600'" class="mr-8 font-normal">{{
-          serverStat.statusEU.label
-        }}</span>
-        {{ serverStat.statusEU.label === "up" ? "Online" : "Offline" }} duration: <span class="font-normal">{{ serverStat.statusEU.duration }}</span>
+        <span class="flex items-center">
+          Status: &nbsp;
+          <svg v-if="isLoading" class="animate-spin h-4 w-4 text-gray-800" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path
+              class="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            ></path>
+          </svg>
+          <span v-if="!isLoading && !error" :class="serverStat.statusEU.label === 'up' ? 'text-green-500' : 'text-red-600'" class="mr-8 font-normal">
+            {{ serverStat.statusEU.label }}
+          </span>
+          <span v-if="!isLoading && !error">
+            {{ serverStat.statusEU.label === "up" ? "Online" : "Offline" }} duration:
+            <span class="font-normal"> {{ serverStat.statusEU.duration }} </span>
+          </span>
+        </span>
+
+        <span v-if="error" class="text-sm text-red-500"> Unable to fetch server data, please try again later. </span>
       </p>
     </div>
     <div class="px-4 py-6 bg-white rounded shadow-lg break-words flex-1">
@@ -109,6 +150,8 @@ export default {
     const weekendEvents = reactive(weekendEventData);
     const thisWeekIndex = ref(0);
     const nextWeekIndex = ref(1);
+    const isLoading = ref(true);
+    const error = ref(false);
 
     onBeforeMount(async () => {
       try {
@@ -118,24 +161,31 @@ export default {
         ]);
 
         [serverStat.statusNA, serverStat.statusEU] = [dataNA.monitor.logs[0], dataEU.monitor.logs[0]];
+        isLoading.value = false;
         updateCountdowns();
       } catch (err) {
         console.log(err);
 
         //Backup in case Bridged's service goes down
-        var addrArr = [NAArsha, EUArsha];
-        const response = await fetch(process.env.VUE_APP_CORS_SERVER, {
-          method: "POST",
-          body: JSON.stringify(addrArr),
-        });
-        var data = await response.text();
-        let NASplitStr = `<a class='multicorsproxy' href='${NAArsha}'>true</a>`;
-        let EUSplitStr = `<a class='multicorsproxy' href='${EUArsha}'>true</a>`;
-        let [dataNA, dataEU] = splitResponse(data, [NASplitStr, EUSplitStr]);
-        dataNA = JSON.parse(dataNA);
-        dataEU = JSON.parse(dataEU);
-        [serverStat.statusNA, serverStat.statusEU] = [dataNA.monitor.logs[0], dataEU.monitor.logs[0]];
-        updateCountdowns();
+        try {
+          var addrArr = [NAArsha, EUArsha];
+          const response = await fetch(process.env.VUE_APP_CORS_SERVER, {
+            method: "POST",
+            body: JSON.stringify(addrArr),
+          });
+          var data = await response.text();
+          let NASplitStr = `<a class='multicorsproxy' href='${NAArsha}'>true</a>`;
+          let EUSplitStr = `<a class='multicorsproxy' href='${EUArsha}'>true</a>`;
+          let [dataNA, dataEU] = splitResponse(data, [NASplitStr, EUSplitStr]);
+          dataNA = JSON.parse(dataNA);
+          dataEU = JSON.parse(dataEU);
+          [serverStat.statusNA, serverStat.statusEU] = [dataNA.monitor.logs[0], dataEU.monitor.logs[0]];
+          isLoading.value = false;
+          updateCountdowns();
+        } catch (err) {
+          error.value = true;
+          console.log(err);
+        }
       }
     });
 
@@ -310,7 +360,7 @@ export default {
     });
     const displayMinute = computed(() => (clock.inGameMinute < 10 ? "0" + +clock.inGameMinute : clock.inGameMinute));
 
-    return { clock, serverStat, weekendEvents, thisWeekIndex, nextWeekIndex, clockTime, ampm, displayHour, displayMinute };
+    return { clock, serverStat, weekendEvents, thisWeekIndex, nextWeekIndex, isLoading, error, clockTime, ampm, displayHour, displayMinute };
   },
 };
 </script>
