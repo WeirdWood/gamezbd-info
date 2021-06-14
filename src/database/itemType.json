@@ -166,7 +166,7 @@
       },
       {
         "name": "PEN",
-        "rate": 0.03
+        "rate": 0.0025
       }
     ]
   },
@@ -536,6 +536,288 @@
       {
         "name": "PEN",
         "rate": 6
+      }
+    ]
+  },
+  {
+    "id": 16,
+    "name": "Horse Gear (White, Greeen, Blue, Yellow)",
+    "fsValue": 0.5,
+    "baseRates": [
+      {
+        "name": "+1",
+        "rate": 66.67
+      },
+      {
+        "name": "+2",
+        "rate": 44.44
+      },
+      {
+        "name": "+3",
+        "rate": 29.63
+      },
+      {
+        "name": "+4",
+        "rate": 19.75
+      },
+      {
+        "name": "+5",
+        "rate": 13.17
+      },
+      {
+        "name": "+6",
+        "rate": 8.78
+      },
+      {
+        "name": "+7",
+        "rate": 5.85
+      },
+      {
+        "name": "+8",
+        "rate": 3.9
+      },
+      {
+        "name": "+9",
+        "rate": 2.6
+      },
+      {
+        "name": "+10",
+        "rate": 1.73
+      }
+    ]
+  },
+  {
+    "id": 17,
+    "name": "Boat Gear (Sailboat/Frigate Crafted Gear)",
+    "fsValue": 0.5,
+    "baseRates": [
+      {
+        "name": "+1",
+        "rate": 66.67
+      },
+      {
+        "name": "+2",
+        "rate": 44.44
+      },
+      {
+        "name": "+3",
+        "rate": 29.63
+      },
+      {
+        "name": "+4",
+        "rate": 19.75
+      },
+      {
+        "name": "+5",
+        "rate": 13.17
+      },
+      {
+        "name": "+6",
+        "rate": 8.78
+      },
+      {
+        "name": "+7",
+        "rate": 5.85
+      },
+      {
+        "name": "+8",
+        "rate": 3.9
+      },
+      {
+        "name": "+9",
+        "rate": 2.6
+      },
+      {
+        "name": "+10",
+        "rate": 1.73
+      }
+    ]
+  },
+  {
+    "id": 18,
+    "name": "Boat Gear (Caravel/Galleass Green Gear)",
+    "fsValue": 0.5,
+    "baseRates": [
+      {
+        "name": "+1",
+        "rate": 70
+      },
+      {
+        "name": "+2",
+        "rate": 60
+      },
+      {
+        "name": "+3",
+        "rate": 50
+      },
+      {
+        "name": "+4",
+        "rate": 45
+      },
+      {
+        "name": "+5",
+        "rate": 40
+      },
+      {
+        "name": "+6",
+        "rate": 37
+      },
+      {
+        "name": "+7",
+        "rate": 35
+      },
+      {
+        "name": "+8",
+        "rate": 33
+      },
+      {
+        "name": "+9",
+        "rate": 31
+      },
+      {
+        "name": "+10",
+        "rate": 30
+      }
+    ]
+  },
+  {
+    "id": 19,
+    "name": "Boat Gear (Caravel/Galleass Blue Gear)",
+    "fsValue": 0.5,
+    "baseRates": [
+      {
+        "name": "+1",
+        "rate": 30
+      },
+      {
+        "name": "+2",
+        "rate": 25
+      },
+      {
+        "name": "+3",
+        "rate": 20
+      },
+      {
+        "name": "+4",
+        "rate": 15
+      },
+      {
+        "name": "+5",
+        "rate": 12
+      },
+      {
+        "name": "+6",
+        "rate": 10
+      },
+      {
+        "name": "+7",
+        "rate": 5
+      },
+      {
+        "name": "+8",
+        "rate": 3
+      },
+      {
+        "name": "+9",
+        "rate": 2
+      },
+      {
+        "name": "+10",
+        "rate": 1
+      }
+    ]
+  },
+  {
+    "id": 20,
+    "name": "Boat Gear (Carrack Green Gear)",
+    "fsValue": 0.5,
+    "baseRates": [
+      {
+        "name": "+1",
+        "rate": 70
+      },
+      {
+        "name": "+2",
+        "rate": 60
+      },
+      {
+        "name": "+3",
+        "rate": 50
+      },
+      {
+        "name": "+4",
+        "rate": 45
+      },
+      {
+        "name": "+5",
+        "rate": 40
+      },
+      {
+        "name": "+6",
+        "rate": 30
+      },
+      {
+        "name": "+7",
+        "rate": 25
+      },
+      {
+        "name": "+8",
+        "rate": 20
+      },
+      {
+        "name": "+9",
+        "rate": 15
+      },
+      {
+        "name": "+10",
+        "rate": 12
+      }
+    ]
+  },
+  {
+    "id": 21,
+    "name": "Boat Gear (Carrack Blue Gear)",
+    "fsValue": 0.5,
+    "baseRates": [
+      {
+        "name": "+1",
+        "rate": 10
+      },
+      {
+        "name": "+2",
+        "rate": 9
+      },
+      {
+        "name": "+3",
+        "rate": 7
+      },
+      {
+        "name": "+4",
+        "rate": 5
+      },
+      {
+        "name": "+5",
+        "rate": 4
+      },
+      {
+        "name": "+6",
+        "rate": 2.5
+      },
+      {
+        "name": "+7",
+        "rate": 1.5
+      },
+      {
+        "name": "+8",
+        "rate": 1
+      },
+      {
+        "name": "+9",
+        "rate": 0.8
+      },
+      {
+        "name": "+10",
+        "rate": 0.5
       }
     ]
   }

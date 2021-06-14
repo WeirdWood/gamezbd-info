@@ -118,7 +118,19 @@
                 </th>
                 <td class="px-2 sm:px-4 hidden sm:block align-middle text-xs whitespace-nowrap p-4 text-left uppercase">{{ baseRate.rate }}%</td>
                 <td class="px-2 sm:px-4 align-middle text-xs whitespace-nowrap p-4 text-left uppercase">{{ round(baseRate.rate + finalBonus) }}%</td>
-                <td class="px-2 sm:px-4 align-middle text-xs whitespace-nowrap p-2 text-left uppercase"> <button class="p-2 bg-white active:bg-gray-200 border w-full rounded hover:shadow-sm outline-none cursor-pointer focus:outline-none ease-linear transition-all duration-150" @click="simulate(baseRate.rate + finalBonus, $event.target)"> Simulate </button></td>
+                <td class="px-2 sm:px-4 align-middle text-xs whitespace-nowrap p-2 text-left uppercase">
+                  <button
+                    class="p-2 bg-white active:bg-gray-200 border w-full h-full rounded hover:shadow-sm outline-none cursor-pointer focus:outline-none ease-linear transition-all duration-150"
+                    @click="simulate(baseRate.rate + finalBonus, index)"
+                  >
+                    <span
+                      class="transition-all duration-150"
+                      :class="{ 'text-green-500': baseRate.simStatus === 'Success', 'text-red-600': baseRate.simStatus === 'Fail' }"
+                    >
+                      {{ baseRate.simStatus === undefined ? "Simulate" : baseRate.simStatus === null ? "&nbsp;" : baseRate.simStatus }}
+                    </span>
+                  </button>
+                </td>
               </tr>
             </tbody>
           </table>
@@ -157,11 +169,31 @@ export default {
       return Math.round((number + Number.EPSILON) * 100) / 100;
     }
 
-    function simulate(rate, e) {
-      if(Math.random() <= (rate * 0.01)) {
-        e.innerHTML = `<span class="text-green-500 transition-all">Success</span>`;
+    function simulate(rate, index) {
+      let d = Date.now();
+      var baseRate = itemTypes[formValues.itemTypeId].baseRates[index];
+      if (baseRate.simulateTimestamp === undefined)
+        baseRate.simulateTimestamp = Date.now() - 1000;
+      if (d - baseRate.simulateTimestamp > 500) {
+        baseRate.simulateTimestamp = d;
+        if (Math.random() <= rate * 0.01) {
+          baseRate.simStatus = null;
+          setTimeout(() => {
+            baseRate.simStatus = "Success";
+          }, 150);
+        } else {
+          baseRate.simStatus = null;
+          setTimeout(() => {
+            baseRate.simStatus = "Fail";
+          }, 150);
+        }
       }
-      else e.innerHTML = `<span class="text-red-600 transition-all">Fail</span>`;
+
+      setTimeout(() => {
+        if (Date.now() - baseRate.simulateTimestamp >= 5000) {
+          baseRate.simStatus = undefined;
+        }
+      }, 5000);
     }
 
     watch(
@@ -174,9 +206,12 @@ export default {
       }
     );
 
-    watch(() => formValues.itemTypeId, () => {
-      reRender.value++;
-    })
+    watch(
+      () => formValues.itemTypeId,
+      () => {
+        reRender.value++;
+      }
+    );
 
     const finalBonus = computed(() => {
       let multiplier = 1 + (formValues.premium ? 0.3 : 0) + (formValues.event ? 0.2 : 0);
