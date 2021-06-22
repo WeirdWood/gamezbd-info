@@ -8,7 +8,7 @@
       <div class="flex flex-col md:flex-row">
         <form @submit.prevent="" autocomplete="off">
           <div class="flex mb-4">
-            <label class="flex items-center cursor-pointer">
+            <label class="flex items-center cursor-pointer" title="+30%">
               <input
                 type="checkbox"
                 name="premium"
@@ -21,7 +21,7 @@
                 Premium
               </span>
             </label>
-            <label class="flex items-center cursor-pointer ml-8">
+            <label class="flex items-center cursor-pointer ml-8" title="+20%">
               <input
                 type="checkbox"
                 name="event"
@@ -36,13 +36,29 @@
             </label>
           </div>
 
-          <div class="w-full mb-4">
+          <div class="w-full mb-2">
             <label class="block text-gray-600 text-sm font-bold mb-2 select-none" for="itemType">
+              Choose formula
+            </label>
+            <select
+              name="formula"
+              id="formula"
+              v-model="formValues.formula"
+              class="px-3 py-3 border-gray-400 placeholder-gray-400 text-gray-700 bg-white rounded text-sm focus:outline-none focus:ring w-full md:w-64"
+              style="transition: all 0.15s ease 0s;"
+            >
+              <option value="additive"> Additive </option>
+              <option value="multiplicative"> Multiplicative </option>
+            </select>
+            <button class="text-blue-500 text-sm mt-2" @click="togglePopup()">What is this?</button>
+          </div>
+          <div class="w-full mb-4">
+            <label class="block text-gray-600 text-sm font-bold mb-2 select-none" for="itemTypes">
               Choose item type
             </label>
             <select
               name="itemType"
-              id="itemType"
+              id="itemTypes"
               v-model="formValues.itemTypeId"
               class="px-3 py-3 border-gray-400 placeholder-gray-400 text-gray-700 bg-white rounded text-sm focus:outline-none focus:ring w-full md:w-64"
               style="transition: all 0.15s ease 0s;"
@@ -74,12 +90,6 @@
               }}
             </span>
           </div>
-          <input
-            class="bg-gray-400 text-white active:bg-gray-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none cursor-pointer focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
-            type="button"
-            value="Clear"
-            @click="clearForm"
-          />
         </form>
 
         <div class="ml-0 md:ml-12 mt-4 md:mt-0">
@@ -138,32 +148,51 @@
       </div>
     </div>
   </div>
+
+  <popup ref="popupRef" />
 </template>
 
 <script>
-import { computed, onMounted, reactive, ref, watch } from "vue";
+import { computed, onMounted, onBeforeUnmount, reactive, ref, watch } from "vue";
+import Popup from "../components/Popup.vue";
 import itemTypeData from "../database/itemType.json";
 
 export default {
+  components: {
+    Popup,
+  },
+
   setup() {
     const formValues = reactive({
       premium: false,
       event: false,
+      formula: "additive",
       itemTypeId: 0,
       failstack: 0,
     });
     const itemTypes = reactive(itemTypeData);
     const fsInput = ref(null);
     const reRender = ref(0);
+    const popupRef = ref();
 
-    onMounted(() => fsInput.value.focus());
+    onMounted(() => {
+      fsInput.value.focus();
 
-    function clearForm() {
-      formValues.premium = false;
-      formValues.event = false;
-      formValues.itemTypeId = 0;
-      formValues.failstack = 0;
-    }
+      if (localStorage.getItem("enhanceConfig")) {
+        try {
+          let enhanceConfig = JSON.parse(localStorage.getItem("enhanceConfig"));
+          formValues.premium = enhanceConfig.premium ? enhanceConfig.premium : formValues.premium;
+          formValues.event = enhanceConfig.event ? enhanceConfig.event : formValues.event;
+          formValues.formula = enhanceConfig.formula ? enhanceConfig.formula : formValues.formula;
+        } catch (e) {
+          localStorage.removeItem("enhanceConfig");
+        }
+      }
+    });
+
+    onBeforeUnmount(() => {
+      localStorage.setItem("enhanceConfig", JSON.stringify(formValues));
+    });
 
     function round(number) {
       return Math.round((number + Number.EPSILON) * 100) / 100;
@@ -172,8 +201,7 @@ export default {
     function simulate(rate, index) {
       let d = Date.now();
       var baseRate = itemTypes[formValues.itemTypeId].baseRates[index];
-      if (baseRate.simulateTimestamp === undefined)
-        baseRate.simulateTimestamp = Date.now() - 1000;
+      if (baseRate.simulateTimestamp === undefined) baseRate.simulateTimestamp = Date.now() - 1000;
       if (d - baseRate.simulateTimestamp > 500) {
         baseRate.simulateTimestamp = d;
         if (Math.random() <= rate * 0.01) {
@@ -196,6 +224,10 @@ export default {
       }, 5000);
     }
 
+    function togglePopup() {
+      popupRef.value.open = true;
+    }
+
     watch(
       () => formValues.failstack,
       () => {
@@ -214,11 +246,13 @@ export default {
     );
 
     const finalBonus = computed(() => {
-      let multiplier = 1 + (formValues.premium ? 0.3 : 0) + (formValues.event ? 0.2 : 0);
+      let premiumMultiplier = formValues.premium ? 1.3 : 1;
+      let eventMultiplier = formValues.event ? 1.2 : 1;
+      let multiplier = formValues.formula === "additive" ? premiumMultiplier + eventMultiplier - 1 : premiumMultiplier * eventMultiplier;
       return formValues.failstack * itemTypes[formValues.itemTypeId].fsValue * multiplier;
     });
 
-    return { itemTypes, formValues, clearForm, round, finalBonus, fsInput, simulate, reRender };
+    return { itemTypes, formValues, round, togglePopup, finalBonus, fsInput, simulate, reRender, popupRef };
   },
 };
 </script>

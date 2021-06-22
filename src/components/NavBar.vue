@@ -16,22 +16,22 @@
       <div v-bind:class="{ hidden: !showMenu, flex: showMenu }" class="lg:flex lg:flex-grow items-center">
         <ul class="flex flex-col lg:flex-row list-none ml-auto">
           <li class="nav-item">
-            <router-link class="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75" to="/fs-calculator">
+            <router-link class="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75" to="/fs-calculator" @click="showMenu = false;">
               Enhance Calculator
             </router-link>
           </li>
           <li class="nav-item">
-            <router-link class="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75" to="/market-calculator">
+            <router-link class="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75" to="/market-calculator" @click="showMenu = false;">
               Market Calculator
             </router-link>
           </li>
           <li class="nav-item">
-            <router-link class="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75" to="/timer">
+            <router-link class="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75" to="/timer" @click="showMenu = false;">
               Timer
             </router-link>
           </li>
           <li class="nav-item">
-            <router-link class="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75" to="/info">
+            <router-link class="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75" to="/info" @click="showMenu = false;">
               Info
             </router-link>
           </li>

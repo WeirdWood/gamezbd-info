@@ -8,7 +8,7 @@
       <div>
         <form @submit.prevent="" autocomplete="off">
           <div class="flex flex-col sm:flex-row mb-4">
-            <label class="flex items-center cursor-pointer">
+            <label class="flex items-center cursor-pointer mb-2" for="value">
               <input
                 type="checkbox"
                 name="value"
@@ -21,7 +21,7 @@
                 Value Pack
               </span>
             </label>
-            <label class="flex items-center cursor-pointer ml-0 sm:ml-8">
+            <label class="flex items-center cursor-pointer ml-0 sm:ml-8 mb-2" for="premium">
               <input
                 type="checkbox"
                 name="premium"
@@ -34,7 +34,7 @@
                 Premium
               </span>
             </label>
-            <label class="flex items-center cursor-pointer ml-0 sm:ml-8">
+            <label class="flex items-center cursor-pointer ml-0 sm:ml-8 mb-2" for="merchant">
               <input
                 type="checkbox"
                 name="merchant"
@@ -99,17 +99,20 @@ export default {
     });
 
     onMounted(() => {
-      if (localStorage.getItem("fame")) {
+      if (localStorage.getItem("marketConfig")) {
         try {
-          formValues.fame = localStorage.getItem("fame");
+          let marketConfig = JSON.parse(localStorage.getItem("marketConfig"));
+          formValues.premium = marketConfig.premium ? marketConfig.premium : formValues.premium;
+          formValues.value = marketConfig.value ? marketConfig.value : formValues.value;
+          formValues.fame = marketConfig.fame ? marketConfig.fame : formValues.fame;
         } catch (e) {
-          localStorage.removeItem("fame");
+          localStorage.removeItem("marketConfig");
         }
       }
     });
 
     onBeforeUnmount(() => {
-      localStorage.setItem("fame", formValues.fame);
+      localStorage.setItem("marketConfig", JSON.stringify(formValues));
     });
 
     function formEval() {
