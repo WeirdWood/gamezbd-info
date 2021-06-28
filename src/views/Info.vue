@@ -9,7 +9,7 @@
           <a :href="event.link" class="text-blue-600" target="_blank" rel="noopener noreferrer"> {{ event.title }} </a>
         </label>
         <br />
-        <span v-html="filterSnippet(event['content:encodedSnippet'], event.title, 200)"></span>
+        <pre v-html="filterSnippet(event['content:encodedSnippet'], event.title, 200)"></pre>
       </p>
       <spinner :isLoading="isLoading" />
       <p v-if="eventArr.length === 0 && !isLoading" class="mb-6 leading-loose text-gray-800">No active event.</p>
@@ -35,7 +35,7 @@
           <a :href="patch.link" class="text-blue-600" target="_blank" rel="noopener noreferrer"> {{ patch.title }} </a>
         </label>
         <br />
-        <span v-html="filterSnippet(patch['content:encodedSnippet'], patch.title, 200)"></span>
+        <span v-html="filterSnippet(patch['content:encoded'], patch.title, 200)"></span>
       </p>
       <spinner :isLoading="isLoading" />
       <p v-if="patchArr.length === 0 && !isLoading" class="mb-6 leading-loose text-gray-800">No patch log.</p>
@@ -113,7 +113,11 @@ export default {
     });
 
     function filterSnippet(snippet, title, size) {
-      let result = snippet.replaceAll(title, "");
+      let result = snippet.replaceAll(title, ""); //trim the title off the snippet
+      result = result.replaceAll(`<div class="type">Code:</div>`, "");  //remove an uncessesary element
+      result = result.replace(/[\u200B-\u200D\uFEFF]/g, '');  //remove zero width spaces
+      result = result.replace(/\n\s*\n/g, '\n');  //remove duplicate line breaks
+      result = result.replace(/^\s+|\s+$/g, '');  //remove start and end line breaks
       if (result.length <= size) return result;
       else return result.substr(0, size) + "...";
     }
@@ -136,3 +140,14 @@ export default {
   },
 };
 </script>
+
+<style>
+/* purgecss ignore */
+pre {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  font-size: 0.875rem;
+line-height: 1.25rem;
+}
+/* purgecss end ignore */
+</style>
