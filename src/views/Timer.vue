@@ -254,12 +254,10 @@ export default {
 
     function updateWeekendEvent() {
       var baselineDay = new Date();
-      baselineDay.setUTCMonth(3);
-      baselineDay.setUTCDate(5);
-      baselineDay.setUTCFullYear(2021);
-      baselineDay.setUTCHours(12, 0, 0, 0);
+      baselineDay.setUTCFullYear(2021, 3, 5);
+      baselineDay.setUTCHours(22, 0, 0, 0);
 
-      //var currentDate = new Date("Mon Apr 12 2021 19:00:00");
+      //var currentDate = new Date("Fri Jul 31 2021 15:00:00");
       var currentDate = new Date();
 
       var diffInWeeks = GetDifferenceInWeeks(baselineDay, currentDate);
