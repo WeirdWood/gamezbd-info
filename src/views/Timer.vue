@@ -253,7 +253,7 @@ export default {
     }
 
     function updateWeekendEvent() {
-      var baselineDay = new Date(Date.UTC(2021, 3, 5, 22));
+      var baselineDay = new Date(Date.UTC(2021, 3, 5, 12));
 
       //var currentDate = new Date("Fri Jul 31 2021 15:00:00");
       var currentDate = new Date();
