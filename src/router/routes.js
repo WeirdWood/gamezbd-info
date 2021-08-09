@@ -4,7 +4,11 @@ const routes = [
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/Index.vue') }
+      { path: '', component: () => import('pages/Index.vue') },
+      { path: '/fs-calculator', component: () => import('src/pages/EnhanceCalculator.vue') },
+      { path: '/market-calculator', component: () => import('pages/MarketCalculator.vue') },
+      { path: '/timer', component: () => import('pages/Timer.vue') },
+      { path: '/info', component: () => import('pages/Info.vue') },
     ]
   },
 
