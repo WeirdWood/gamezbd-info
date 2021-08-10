@@ -1,15 +1,16 @@
 <template>
   <q-page class="q-ma-lg">
-    <h5 class="q-mb-sm text-weight-regular">Enhance Calculator</h5>
+    <h5 class="q-mb-md text-weight-regular">Enhance Calculator</h5>
     <div class="row q-gutter-md">
-      <q-card flat class="col my-card q-pa-md">
-        <q-card-section class="q-pa-none">
-          <div class="q-gutter-x-md q-gutter-y-lg">
+      <q-card flat class="col q-pa-md">
+        <q-card-section class="q-pa-none q-gutter-y-lg">
+          <div class="q-gutter-x-md q-gutter-y-none">
             <q-checkbox v-model="formValues.premium" label="Premium" />
             <q-checkbox v-model="formValues.event" label="Event" />
           </div>
-          <div class="q-gutter-x-md q-gutter-y-lg col">
+          <div class="q-gutter-md col">
             <q-select
+              outlined
               v-model="formValues.formula"
               label="Choose formula"
               :options="formulaStringOptions"
@@ -20,8 +21,13 @@
               class="block q-mt-sm"
               style="width: fit-content; text-decoration: none"
               @click.prevent="alert = true"
-              >What is this?</a
             >
+              <q-icon
+                name="o_info"
+                style="font-size: 1.125rem; margin-top: -0.125rem"
+              />
+              What is this?
+            </a>
             <q-dialog v-model="alert">
               <q-card>
                 <q-card-section>
@@ -70,6 +76,7 @@
               </q-card>
             </q-dialog>
             <q-select
+              outlined
               v-model="formValues.itemType"
               use-input
               input-debounce="50"
@@ -89,6 +96,7 @@
               </template>
             </q-select>
             <q-input
+              outlined
               v-model.number="formValues.failstack"
               type="number"
               label="Enter failstack"
@@ -99,23 +107,64 @@
           </div>
         </q-card-section>
       </q-card>
-      <q-card flat class="col my-card q-pa-md">
+      <q-card flat class="col q-pa-md">
         <q-card-section class="q-pa-none">
-          
+          <enhance-table
+            :baseRates="formValues.itemType.baseRates"
+            :bonus="finalBonus"
+          />
         </q-card-section>
       </q-card>
     </div>
+    <q-card flat class="q-pa-md q-mt-md q-ml-none q-gutter-md">
+      <div class="row q-ma-none">
+        <div class="col-grow">
+          <div class="text-h6 text-weight-regular q-mb-md">
+            Simulate Enhance
+          </div>
+          <q-btn-toggle
+            v-model="simSelectedGrade"
+            class="btn-group-simulate"
+            toggle-color="dark"
+            :options="simGradeOptions"
+            padding="0.75rem 1rem"
+            unelevated
+            rounded
+          />
+        </div>
+        <div class="col-3">
+          <q-btn
+            color="dark"
+            label="Simulate"
+            padding="0.75rem 1rem"
+            unelevated
+            class="full-width q-mb-sm cornered"
+            @click="simulate()"
+          />
+          <div
+            ref="simResultBox"
+            class="bg-grey-2 full-width cornered q-pa-md"
+            style="height: 12rem; overflow-y: scroll"
+          ></div>
+        </div>
+      </div>
+    </q-card>
   </q-page>
 </template>
 
 <script>
-import { defineComponent, reactive, ref, watch } from "vue";
+import { defineComponent, reactive, ref, watch, computed } from "vue";
 import itemTypeData from "../database/itemType.json";
+import EnhanceTable from "components/enhanceTable.vue";
 
 const formulaStringOptions = ["Additive", "Multiplicative"];
 
 export default defineComponent({
   name: "Enhance Calculator",
+
+  components: {
+    EnhanceTable,
+  },
 
   setup() {
     const formValues = reactive({
@@ -127,6 +176,49 @@ export default defineComponent({
     });
     const itemTypeOptions = ref(itemTypeData);
     const alert = ref(false);
+    const simSelectedGrade = ref(0);
+    const simResultBox = ref(null);
+
+    function filterFn(val, update) {
+      if (val === "") {
+        update(() => {
+          itemTypeOptions.value = itemTypeData;
+        });
+        return;
+      }
+
+      update(() => {
+        const needle = val.toLowerCase();
+        itemTypeOptions.value = itemTypeData.filter(
+          (v) => v.name.toLowerCase().indexOf(needle) > -1
+        );
+      });
+    }
+
+    function round(number) {
+      return Math.round((number + Number.EPSILON) * 100) / 100;
+    }
+
+    function simulate() {
+      const baseRate = formValues.itemType.baseRates[simSelectedGrade.value];
+      var finalRate = baseRate.rate + finalBonus.value;
+      var simValue = Math.random() * 100;
+      let resultElement = document.createElement("p");
+
+      if (simValue <= finalRate) {
+        resultElement.innerText = `${baseRate.name} - ${
+          formValues.failstack
+        }FS - success: ${round(simValue)}`;
+        resultElement.classList.add("text-positive");
+      } else {
+        resultElement.innerText = `${baseRate.name} - ${
+          formValues.failstack
+        }FS - failed: ${round(simValue)}`;
+        resultElement.classList.add("text-negative");
+      }
+
+      simResultBox.value.prepend(resultElement);
+    }
 
     watch(
       () => formValues.failstack,
@@ -145,29 +237,61 @@ export default defineComponent({
       }
     );
 
-    function filterFn(val, update) {
-      if (val === "") {
-        update(() => {
-          itemTypeOptions.value = itemTypeData;
-        });
-        return;
+    watch(
+      () => formValues.itemType,
+      () => {
+        simSelectedGrade.value = 0;
       }
+    );
 
-      update(() => {
-        const needle = val.toLowerCase();
-        itemTypeOptions.value = itemTypeData.filter(
-          (v) => v.name.toLowerCase().indexOf(needle) > -1
-        );
-      });
-    }
+    const finalBonus = computed(() => {
+      let premiumMultiplier = formValues.premium ? 1.3 : 1;
+      let eventMultiplier = formValues.event ? 1.2 : 1;
+      let multiplier =
+        formValues.formula === "Additive"
+          ? premiumMultiplier + eventMultiplier - 1
+          : premiumMultiplier * eventMultiplier;
+      return (
+        formValues.failstack *
+        itemTypeData[formValues.itemType.id].fsValue *
+        multiplier
+      );
+    });
+
+    const simGradeOptions = computed(() => {
+      return formValues.itemType.baseRates.map((baseRate, index) => ({
+        label: baseRate.name,
+        value: index,
+        rate: baseRate.rate,
+      }));
+    });
 
     return {
       formValues,
       formulaStringOptions,
       itemTypeOptions,
       alert,
+      simSelectedGrade,
       filterFn,
+      finalBonus,
+      simGradeOptions,
+      simResultBox,
+      simulate,
     };
   },
 });
 </script>
+
+<style lang="scss">
+.btn-group-simulate {
+  .q-btn--rounded {
+    border: 1px solid $separator-color;
+    border-radius: $generic-border-radius !important;
+    margin-right: 0.5rem;
+  }
+}
+
+.cornered {
+  border-radius: $generic-border-radius !important;
+}
+</style>

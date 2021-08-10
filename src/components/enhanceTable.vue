@@ -4,19 +4,69 @@
     :rows="rows"
     :columns="columns"
     row-key="name"
+    :pagination="initialPagination"
     separator="vertical"
+    hide-bottom
+    flat
+    bordered
   />
 </template>
 
 <script>
-import { defineComponent } from 'vue';
+import { defineComponent, computed } from "vue";
+
+const columnsData = [
+  {
+    name: "name",
+    label: "GRADE",
+    align: "left",
+    field: "name",
+  },
+  {
+    name: "baseRate",
+    label: "BASE CHANCE",
+    field: "rate",
+    format: val => `${val}%`,
+  },
+  {
+    name: "finalRate",
+    label: "SUCCESS RATE",
+    field: "finalRate",
+    format: val => `${val}%`,
+  },
+];
 
 export default defineComponent({
-   name: "Enhance Table",
+  name: "Enhance Table",
 
-   props: {
-       rows: Array,
-       collumns: Array
-   }
+  props: {
+    baseRates: Array,
+    bonus: Number,
+  },
+
+  setup(props) {
+    function round(number) {
+      return Math.round((number + Number.EPSILON) * 100) / 100;
+    }
+
+    const rows = computed(() => {
+      return props.baseRates.map((baseRate) => ({
+        ...baseRate,
+        finalRate: round(baseRate.rate + props.bonus),
+      }));
+    });
+
+    const columns = computed(() => {
+      return columnsData;
+    });
+
+    return {
+      rows,
+      columns,
+      initialPagination: {
+        rowsPerPage: 0,
+      },
+    };
+  },
 });
 </script>
