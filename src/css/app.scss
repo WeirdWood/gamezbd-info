@@ -1,1 +1,67 @@
 // app global css in SCSS form
+.container {
+  margin: 0 auto;
+  width: 100%;
+}
+
+.body--light {
+    background-color: $grey-2;
+}
+
+body.body--dark {
+    color: #f1f1f1;
+}
+
+.q-dark {
+    color: #f1f1f1;
+}
+
+.q-list--dark, .q-item--dark {
+    color: #f1f1f1;
+
+    &.q-item--active {
+        color: $primary;
+    }
+}
+
+.q-field--dark .q-field__native, .q-field--dark .q-field__prefix, .q-field--dark .q-field__suffix, .q-field--dark .q-field__input {
+    color: #f1f1f1;
+}
+
+.q-scrollarea.q-scrollarea--dark {
+    background-color: darken($dark, 2) !important;
+}
+
+.q-field--dark .q-field__control:before {
+    border-color: rgba(#fff, 0.4);
+}
+
+@media only screen and (min-width: 640px) {
+  .container {
+    max-width: 640px;
+  }
+}
+
+@media only screen and (min-width: 768px) {
+  .container {
+    max-width: 768px;
+  }
+}
+
+@media only screen and (min-width: 1024px) {
+  .container {
+    max-width: 1024px;
+  }
+}
+
+@media only screen and (min-width: 1280px) {
+  .container {
+    max-width: 1280px;
+  }
+}
+
+@media only screen and (min-width: 1536px) {
+  .container {
+    max-width: 1536px;
+  }
+}

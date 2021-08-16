@@ -24,10 +24,10 @@
       show-if-above
       :mini="miniState"
       :width="250"
-      :breakpoint="600"
       bordered
+      class="column"
     >
-      <q-scroll-area class="fit hide-scrollbar">
+      <q-scroll-area class="col hide-scrollbar">
         <q-list padding>
           <q-item to="/fs-calculator" exact clickable v-ripple>
             <q-item-section avatar>
@@ -57,32 +57,65 @@
 
             <q-item-section> Info </q-item-section>
           </q-item>
+          <q-separator />
+          <q-item>
+            <q-item-section avatar>
+              <q-icon name="settings" />
+            </q-item-section>
+
+            <q-item-section>
+              <q-toggle
+                v-model="darkMode"
+                color="primary"
+                label="Dark Mode"
+              />
+            </q-item-section>
+          </q-item>
         </q-list>
       </q-scroll-area>
     </q-drawer>
 
-    <q-page-container class="bg-grey-2">
+    <q-page-container>
       <router-view></router-view>
     </q-page-container>
   </q-layout>
 </template>
 
 <script>
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref, watch } from "vue";
+import { useQuasar } from 'quasar';
 
 export default defineComponent({
   name: "MainLayout",
 
   setup() {
+    const $q = useQuasar();
     const leftDrawerOpen = ref(false);
     const miniState = ref(false);
+    const darkMode = ref($q.dark.isActive);
+
+    function setDarkMode() {
+      $q.dark.toggle();
+    }
+
+    function toggleLeftDrawer() {
+        if(window.innerWidth > 1023)
+          miniState.value = !miniState.value;
+        else {
+          leftDrawerOpen.value = !leftDrawerOpen.value;
+        }
+      }
+
+    watch(darkMode, () => {
+      $q.dark.set(darkMode.value);
+    })
 
     return {
       leftDrawerOpen,
       miniState,
-      toggleLeftDrawer() {
-        miniState.value = !miniState.value;
-      },
+      darkMode,
+      toggleLeftDrawer,
+      setDarkMode,
     };
   },
 });
