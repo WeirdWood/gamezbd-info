@@ -24,7 +24,6 @@
       show-if-above
       :mini="miniState"
       :width="250"
-      bordered
       class="column"
     >
       <q-scroll-area class="col hide-scrollbar">

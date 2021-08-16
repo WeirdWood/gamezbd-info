@@ -11,7 +11,7 @@
             </div>
             <div class="q-gutter-md col">
               <q-select
-                outlined
+                filled
                 v-model="formValues.formula"
                 label="Choose formula"
                 :options="formulaStringOptions"
@@ -76,7 +76,7 @@
                 </q-card>
               </q-dialog>
               <q-select
-                outlined
+                filled
                 v-model="formValues.itemType"
                 use-input
                 input-debounce="50"
@@ -96,7 +96,7 @@
                 </template>
               </q-select>
               <q-input
-                outlined
+                filled
                 v-model.number="formValues.failstack"
                 type="number"
                 min="0"
@@ -299,7 +299,7 @@ export default defineComponent({
   flex-wrap: wrap !important;
 
   .q-btn--rounded {
-    border: 1px solid $separator-color;
+    background-color: $grey-2;
     border-radius: $generic-border-radius !important;
     margin-right: 0.5rem;
     margin-bottom: 0.5rem;
@@ -308,8 +308,7 @@ export default defineComponent({
 
 .q-dark .btn-group-simulate {
   .q-btn--rounded {
-    background-color: darken($dark, 2);
-    border-color: darken($dark, 2);
+    background-color: rgba(white, 0.12);
   }
 }
 
