@@ -1,14 +1,22 @@
 [
   {
-    "threshold": 7000,
-    "bonus": 1.5
+    "label": "0 - 999",
+    "threshold": 0,
+    "bonus": 0
   },
   {
+    "label": "1000 - 3999",
+    "threshold": 1000,
+    "bonus": 0.5
+  },
+  {
+    "label": "4000 - 6999",
     "threshold": 4000,
     "bonus": 1
   },
   {
-    "threshold": 1000,
-    "bonus": 0.5
+    "label": "7000 or more",
+    "threshold": 7000,
+    "bonus": 1.5
   }
 ]

@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <q-page class="q-mx-lg">
+    <q-page class="q-mx-md">
       <h5 class="q-ma-none q-pt-lg text-weight-regular">Enhance Calculator</h5>
       <div class="row">
         <q-card flat class="col-md col-sm-12 col-xs-12 q-mt-md q-mr-md q-pa-md">
@@ -15,7 +15,6 @@
                 v-model="formValues.formula"
                 label="Choose formula"
                 :options="formulaStringOptions"
-                behavior="menu"
               />
               <a
                 class="block q-mt-sm text-secondary cursor-pointer"
@@ -85,7 +84,6 @@
                 option-value="id"
                 option-label="name"
                 @filter="filterFn"
-                behavior="menu"
               >
                 <template v-slot:no-option>
                   <q-item>
@@ -101,7 +99,6 @@
                 type="number"
                 min="0"
                 label="Enter failstack"
-                mask="###"
                 autofocus
                 class="q-mb-lg"
               />
