@@ -4,6 +4,10 @@
   width: 100%;
 }
 
+.cornered {
+  border-radius: $generic-border-radius !important;
+}
+
 .body--light {
     background-color: $grey-2;
 }

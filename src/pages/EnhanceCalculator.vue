@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <q-page class="q-mx-lg">
-      <h5 class="q-mb-md text-weight-regular">Enhance Calculator</h5>
+      <h5 class="q-ma-none q-pt-lg text-weight-regular">Enhance Calculator</h5>
       <div class="row">
         <q-card flat class="col-md col-sm-12 col-xs-12 q-mt-md q-mr-md q-pa-md">
           <q-card-section class="q-pa-none q-gutter-y-lg">
@@ -143,7 +143,7 @@
             />
             <q-scroll-area
               class="full-width cornered q-pa-md"
-              style="height: 12rem;"
+              style="height: 12rem"
             >
               <p
                 v-for="result in simResultArr.slice().reverse()"
@@ -164,7 +164,15 @@
 </template>
 
 <script>
-import { defineComponent, reactive, ref, watch, computed } from "vue";
+import {
+  defineComponent,
+  reactive,
+  ref,
+  watch,
+  computed,
+  onMounted,
+  onBeforeUnmount,
+} from "vue";
 import itemTypeData from "../database/itemType.json";
 import EnhanceTable from "components/enhanceTable.vue";
 
@@ -231,6 +239,35 @@ export default defineComponent({
         });
       }
     }
+
+    onMounted(() => {
+      if (localStorage.getItem("storagePermission") !== "true") {
+        localStorage.removeItem("enhanceConfig");
+      } else if (localStorage.getItem("enhanceConfig")) {
+        try {
+          let enhanceConfig = JSON.parse(
+            localStorage.getItem("enhanceConfig")
+          );
+          formValues.premium = enhanceConfig.premium
+            ? enhanceConfig.premium
+            : formValues.premium;
+          formValues.event = enhanceConfig.event
+            ? enhanceConfig.event
+            : formValues.event;
+          formValues.formula = enhanceConfig.formula
+            ? enhanceConfig.formula
+            : formValues.formula;
+        } catch (e) {
+          localStorage.removeItem("enhanceConfig");
+        }
+      }
+    });
+
+    onBeforeUnmount(() => {
+      if (localStorage.getItem("storagePermission") === "true") {
+        localStorage.setItem("enhanceConfig", JSON.stringify(formValues));
+      }
+    });
 
     watch(
       () => formValues.failstack,
@@ -310,10 +347,6 @@ export default defineComponent({
   .q-btn--rounded {
     background-color: rgba(white, 0.12);
   }
-}
-
-.cornered {
-  border-radius: $generic-border-radius !important;
 }
 </style>
 

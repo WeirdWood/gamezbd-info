@@ -63,11 +63,7 @@
             </q-item-section>
 
             <q-item-section>
-              <q-toggle
-                v-model="darkMode"
-                color="primary"
-                label="Dark Mode"
-              />
+              <q-toggle v-model="darkMode" color="primary" label="Dark Mode" />
             </q-item-section>
           </q-item>
         </q-list>
@@ -77,12 +73,30 @@
     <q-page-container>
       <router-view></router-view>
     </q-page-container>
+
+    <q-footer v-if="!storagePermission" class="cookie-footer text-white">
+      <div class="row items-center q-pa-md">
+        <p class="col text-body1 q-ma-none q-mr-sm">
+          This website uses cookies to ensure you get the best experience on our
+          website.
+        </p>
+        <q-btn
+          class="col-grow"
+          color="secondary"
+          unelevated
+          rounded
+          padding="0.5rem 3rem"
+          label="Got it!"
+          @click="closeCookieBox()"
+        />
+      </div>
+    </q-footer>
   </q-layout>
 </template>
 
 <script>
 import { defineComponent, ref, watch } from "vue";
-import { useQuasar } from 'quasar';
+import { useQuasar } from "quasar";
 
 export default defineComponent({
   name: "MainLayout",
@@ -92,30 +106,43 @@ export default defineComponent({
     const leftDrawerOpen = ref(false);
     const miniState = ref(false);
     const darkMode = ref($q.dark.isActive);
+    const storagePermission = ref(localStorage.getItem("storagePermission") === "true");
 
     function setDarkMode() {
       $q.dark.toggle();
     }
 
     function toggleLeftDrawer() {
-        if(window.innerWidth > 1023)
-          miniState.value = !miniState.value;
-        else {
-          leftDrawerOpen.value = !leftDrawerOpen.value;
-        }
+      if (window.innerWidth > 1023) miniState.value = !miniState.value;
+      else {
+        leftDrawerOpen.value = !leftDrawerOpen.value;
       }
+    }
+
+    function closeCookieBox() {
+      localStorage.setItem("storagePermission", "true");
+      storagePermission.value = true;
+    }
 
     watch(darkMode, () => {
       $q.dark.set(darkMode.value);
-    })
+    });
 
     return {
       leftDrawerOpen,
       miniState,
       darkMode,
+      storagePermission,
       toggleLeftDrawer,
       setDarkMode,
+      closeCookieBox,
     };
   },
 });
 </script>
+
+<style lang="scss" scoped>
+.cookie-footer {
+  background-color: #424851;
+}
+</style>
