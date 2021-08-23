@@ -1,9 +1,11 @@
 <template>
   <div class="container">
-    <q-page class="q-mx-md">
-      <h5 class="q-ma-none q-pt-lg text-weight-regular">Enhance Calculator</h5>
-      <div class="row">
-        <q-card flat class="col-md col-sm-12 col-xs-12 q-mt-md q-mr-md q-pa-md">
+    <q-page class="q-mx-md q-pt-lg">
+      <div class="row q-gutter-y-md">
+        <q-card flat class="col-md col-sm-12 col-xs-12 q-mr-md q-pa-md">
+          <h5 class="q-ma-none q-pb-md text-weight-regular text-primary">
+            Enhance Calculator
+          </h5>
           <q-card-section class="q-pa-none q-gutter-y-lg">
             <div class="q-gutter-x-md q-gutter-y-none">
               <q-checkbox v-model="formValues.premium" label="Premium" />
@@ -105,7 +107,7 @@
             </div>
           </q-card-section>
         </q-card>
-        <q-card flat class="col-md col-sm-12 col-xs-12 q-mt-md q-pa-md">
+        <q-card flat class="col-md col-sm-12 col-xs-12 q-pa-md">
           <q-card-section class="q-pa-none">
             <enhance-table
               :baseRates="formValues.itemType.baseRates"
@@ -170,6 +172,7 @@ import {
   onMounted,
   onBeforeUnmount,
 } from "vue";
+import useStates from "../modules/states";
 import itemTypeData from "../database/itemType.json";
 import EnhanceTable from "components/enhanceTable.vue";
 
@@ -190,10 +193,11 @@ export default defineComponent({
       itemType: itemTypeData[0],
       failstack: 0,
     });
-    const itemTypeOptions = ref(itemTypeData);
+    const itemTypeOptions = itemTypeData;
     const alert = ref(false);
     const simSelectedGrade = ref(0);
     const simResultArr = reactive([]);
+    const { storagePermission } = useStates();
 
     function filterFn(val, update) {
       if (val === "") {
@@ -238,13 +242,11 @@ export default defineComponent({
     }
 
     onMounted(() => {
-      if (localStorage.getItem("storagePermission") !== "true") {
+      if (!storagePermission.value) {
         localStorage.removeItem("enhanceConfig");
       } else if (localStorage.getItem("enhanceConfig")) {
         try {
-          let enhanceConfig = JSON.parse(
-            localStorage.getItem("enhanceConfig")
-          );
+          let enhanceConfig = JSON.parse(localStorage.getItem("enhanceConfig"));
           formValues.premium = enhanceConfig.premium
             ? enhanceConfig.premium
             : formValues.premium;
@@ -261,7 +263,7 @@ export default defineComponent({
     });
 
     onBeforeUnmount(() => {
-      if (localStorage.getItem("storagePermission") === "true") {
+      if (storagePermission.value) {
         localStorage.setItem("enhanceConfig", JSON.stringify(formValues));
       }
     });

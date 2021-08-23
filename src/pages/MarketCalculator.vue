@@ -1,8 +1,10 @@
 <template>
   <div class="container">
-    <q-page class="q-mx-md">
-      <h5 class="q-ma-none q-pt-lg text-weight-regular">Market Calculator</h5>
-      <q-card flat class="q-mt-md q-px-md q-py-lg">
+    <q-page class="q-mx-md q-pt-lg">
+      <q-card flat class="q-px-md q-py-lg">
+        <h5 class="q-ma-none q-pb-md text-weight-regular text-primary">
+          Market Calculator
+        </h5>
         <q-card-section class="q-pa-none q-gutter-y-md">
           <div class="q-gutter-x-md q-gutter-y-none">
             <q-checkbox v-model="formValues.value" label="Value Pack" />
@@ -116,6 +118,7 @@ import {
   reactive,
   watch,
 } from "vue";
+import useStates from "../modules/states";
 import familyFameBonus from "../database/familyFameBonus.json";
 
 export default defineComponent({
@@ -138,9 +141,10 @@ export default defineComponent({
       silver: "0",
       silverLostPerItem: "0",
     });
+    const { storagePermission } = useStates();
 
     onMounted(() => {
-      if (localStorage.getItem("storagePermission") !== "true") {
+      if (!storagePermission.value) {
         localStorage.removeItem("marketConfig");
       } else if (localStorage.getItem("marketConfig")) {
         try {
@@ -161,7 +165,7 @@ export default defineComponent({
     });
 
     onBeforeUnmount(() => {
-      if (localStorage.getItem("storagePermission") === "true") {
+      if (storagePermission.value) {
         localStorage.setItem("marketConfig", JSON.stringify(formValues));
       }
     });

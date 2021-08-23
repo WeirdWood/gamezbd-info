@@ -71,7 +71,7 @@ module.exports = configure(function (ctx) {
 
       env: {
         WORKER_URL: ctx.dev
-          ? "https://cloudflare-workers-dev.zbd-info.workers.dev"
+          ? "https://your-dev-worker-url-here.workers.dev"
           : "https://cloudflare-workers.zbd-info.workers.dev",
       },
     },

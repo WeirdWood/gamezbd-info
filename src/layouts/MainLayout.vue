@@ -1,6 +1,6 @@
 <template>
   <q-layout view="hHh lpR fFf">
-    <q-header elevated class="bg-primary text-white q-pa-sm">
+    <q-header elevated class="bg-primary text-white q-py-sm">
       <q-toolbar>
         <q-btn
           flat
@@ -15,7 +15,9 @@
           GamezBD Info
         </q-toolbar-title>
 
-        <div>Quasar v{{ $q.version }}</div>
+        <div>
+          <q-select borderless dense class="server-select" v-model="selectedServer" :options="serverOptions" />
+        </div>
       </q-toolbar>
     </q-header>
 
@@ -26,7 +28,7 @@
       :width="250"
       class="column"
     >
-      <q-scroll-area class="col hide-scrollbar">
+      <q-scroll-area class="col hide-scrollbar" style="overflow: hidden">
         <q-list padding>
           <q-item to="/fs-calculator" exact clickable v-ripple>
             <q-item-section avatar>
@@ -97,6 +99,7 @@
 <script>
 import { defineComponent, ref, watch } from "vue";
 import { useQuasar } from "quasar";
+import useStates from "../modules/states";
 
 export default defineComponent({
   name: "MainLayout",
@@ -106,7 +109,7 @@ export default defineComponent({
     const leftDrawerOpen = ref(false);
     const miniState = ref(false);
     const darkMode = ref($q.dark.isActive);
-    const storagePermission = ref(localStorage.getItem("storagePermission") === "true");
+    const { storagePermission, serverOptions, selectedServer, closeCookieBox } = useStates();
 
     function setDarkMode() {
       $q.dark.toggle();
@@ -119,11 +122,6 @@ export default defineComponent({
       }
     }
 
-    function closeCookieBox() {
-      localStorage.setItem("storagePermission", "true");
-      storagePermission.value = true;
-    }
-
     watch(darkMode, () => {
       $q.dark.set(darkMode.value);
     });
@@ -133,6 +131,8 @@ export default defineComponent({
       miniState,
       darkMode,
       storagePermission,
+      selectedServer,
+      serverOptions,
       toggleLeftDrawer,
       setDarkMode,
       closeCookieBox,
@@ -141,8 +141,16 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .cookie-footer {
   background-color: #424851;
+}
+.server-select {
+  .q-field__native, .q-field__append {
+    color: white !important;
+  }
+  .q-field__native {
+    margin-left: 0.75rem;
+  }
 }
 </style>
