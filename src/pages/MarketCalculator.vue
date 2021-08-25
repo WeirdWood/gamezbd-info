@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <q-page class="q-mx-md q-pt-lg">
+    <q-page class="q-mx-md q-py-lg">
       <q-card flat class="q-px-md q-py-lg">
         <h5 class="q-ma-none q-pb-md text-weight-regular text-primary">
           Market Calculator
@@ -215,9 +215,3 @@ export default defineComponent({
   },
 });
 </script>
-
-<style lang="scss" scoped>
-.container {
-  max-width: 64rem;
-}
-</style>

@@ -16,7 +16,13 @@
         </q-toolbar-title>
 
         <div>
-          <q-select borderless dense class="server-select" v-model="selectedServer" :options="serverOptions" />
+          <q-select
+            borderless
+            dense
+            class="server-select"
+            v-model="selectedServer"
+            :options="serverOptions"
+          />
         </div>
       </q-toolbar>
     </q-header>
@@ -28,7 +34,7 @@
       :width="250"
       class="column"
     >
-      <q-scroll-area class="col hide-scrollbar" style="overflow: hidden">
+      <q-scroll-area class="col hide-scrollbar" style="overflow: hidden" :visible="false">
         <q-list padding>
           <q-item to="/fs-calculator" exact clickable v-ripple>
             <q-item-section avatar>
@@ -109,7 +115,8 @@ export default defineComponent({
     const leftDrawerOpen = ref(false);
     const miniState = ref(false);
     const darkMode = ref($q.dark.isActive);
-    const { storagePermission, serverOptions, selectedServer, closeCookieBox } = useStates();
+    const { storagePermission, serverOptions, selectedServer, closeCookieBox } =
+      useStates();
 
     function setDarkMode() {
       $q.dark.toggle();
@@ -146,7 +153,8 @@ export default defineComponent({
   background-color: #424851;
 }
 .server-select {
-  .q-field__native, .q-field__append {
+  .q-field__native,
+  .q-field__append {
     color: white !important;
   }
   .q-field__native {

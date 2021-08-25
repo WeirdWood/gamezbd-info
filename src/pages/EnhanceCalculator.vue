@@ -1,8 +1,8 @@
 <template>
   <div class="container">
-    <q-page class="q-mx-md q-pt-lg">
+    <q-page class="q-mx-md q-py-lg">
       <div class="row q-gutter-y-md">
-        <q-card flat class="col-md col-sm-12 col-xs-12 q-mr-md q-pa-md">
+        <q-card flat class="col-md col-sm-12 col-xs-12 q-mr-md q-px-md q-py-lg">
           <h5 class="q-ma-none q-pb-md text-weight-regular text-primary">
             Enhance Calculator
           </h5>
@@ -107,7 +107,7 @@
             </div>
           </q-card-section>
         </q-card>
-        <q-card flat class="col-md col-sm-12 col-xs-12 q-pa-md">
+        <q-card flat class="col-md col-sm-12 col-xs-12 q-px-md q-py-lg">
           <q-card-section class="q-pa-none">
             <enhance-table
               :baseRates="formValues.itemType.baseRates"
@@ -350,10 +350,6 @@ export default defineComponent({
 </style>
 
 <style lang="scss" scoped>
-.container {
-  max-width: 64rem;
-}
-
 .q-scrollarea {
   background-color: $grey-2;
 }

@@ -1,7 +1,7 @@
 <template>
   <div class="container">
-    <q-page class="q-mx-md q-pt-lg">
-        <q-card flat class="col-md col-sm-12 col-xs-12 q-pa-md">
+    <q-page class="q-mx-md q-py-lg">
+        <q-card flat class="col-md col-sm-12 col-xs-12 q-px-md q-py-lg">
           <q-card-section class="q-pa-none">
             <h5 class="q-ma-none q-pb-md text-weight-regular text-primary">
               Patch Notes
@@ -10,7 +10,7 @@
           </q-card-section>
         </q-card>
 
-        <q-card flat class="col-md col-sm-12 col-xs-12 q-mt-md q-pa-md">
+        <q-card flat class="col-md col-sm-12 col-xs-12 q-mt-md q-px-md q-py-lg">
           <q-card-section class="q-pa-none">
             <h5 class="q-ma-none q-pb-md text-weight-regular text-primary">
               Active Server Events
@@ -24,6 +24,7 @@
 
 <script>
 import { defineComponent, reactive, onBeforeMount } from "vue";
+import useStates from "../modules/states";
 import expandableInfo from "../components/expandableInfo.vue";
 var parser = require("fast-xml-parser");
 
@@ -40,16 +41,17 @@ export default defineComponent({
   },
 
   setup() {
-    let patchData = reactive({
+    const patchData = reactive({
       error: false,
       loading: true,
       array: []
     });
-    let eventData = reactive({
+    const eventData = reactive({
       error: false,
       loading: true,
       array: []
     });
+    const { splitResponse } = useStates();
     //const miscArr = ref(miscInfoData);
 
     onBeforeMount(async () => {
@@ -84,26 +86,6 @@ export default defineComponent({
       }
     });
 
-    function splitResponse(data, splitStr) {
-      let firstStart = data.lastIndexOf(splitStr[0]);
-      let secondStart = data.lastIndexOf(splitStr[1]);
-      var firstData, secondData;
-      if (firstStart < secondStart) {
-        firstData = data.substring(
-          firstStart + splitStr[0].length,
-          secondStart
-        );
-        secondData = data.substring(secondStart + splitStr[1].length);
-      } else {
-        secondData = data.substring(
-          secondStart + splitStr[1].length,
-          firstStart
-        );
-        firstData = data.substring(firstStart + splitStr[0].length);
-      }
-      return [firstData, secondData];
-    }
-
     return { eventData, patchData };
   },
 });
@@ -116,9 +98,5 @@ pre {
   font-size: 0.875rem;
   line-height: 1.25rem;
   margin: 0;
-}
-
-.container {
-  max-width: 64rem;
 }
 </style>
