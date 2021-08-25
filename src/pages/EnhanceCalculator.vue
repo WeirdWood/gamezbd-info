@@ -24,7 +24,7 @@
                 @click.prevent="alert = true"
               >
                 <q-icon
-                  name="o_info"
+                  name="help_outline"
                   style="font-size: 1.125rem; margin-top: -0.125rem"
                 />
                 What is this?

@@ -34,32 +34,36 @@
       :width="250"
       class="column"
     >
-      <q-scroll-area class="col hide-scrollbar" style="overflow: hidden" :visible="false">
+      <q-scroll-area
+        class="col hide-scrollbar"
+        style="overflow: hidden"
+        :visible="false"
+      >
         <q-list padding>
           <q-item to="/fs-calculator" exact clickable v-ripple>
             <q-item-section avatar>
-              <q-icon name="o_add_chart" />
+              <q-icon name="add_chart" />
             </q-item-section>
 
             <q-item-section> Enhance Calculator </q-item-section>
           </q-item>
           <q-item to="/market-calculator" exact clickable v-ripple>
             <q-item-section avatar>
-              <q-icon name="o_storefront" />
+              <q-icon name="storefront" />
             </q-item-section>
 
             <q-item-section> Market Calculator </q-item-section>
           </q-item>
           <q-item to="/timer" exact clickable v-ripple>
             <q-item-section avatar>
-              <q-icon name="o_timer" />
+              <q-icon name="timer" />
             </q-item-section>
 
             <q-item-section> Timer </q-item-section>
           </q-item>
           <q-item to="/info" exact clickable v-ripple>
             <q-item-section avatar>
-              <q-icon name="o_info" />
+              <q-icon name="help_outline" />
             </q-item-section>
 
             <q-item-section> Info </q-item-section>
@@ -80,6 +84,105 @@
 
     <q-page-container>
       <router-view></router-view>
+
+      <q-page-sticky position="bottom-right" :offset="[24, 24]">
+        <q-btn
+          rounded
+          color="secondary"
+          icon="alarm"
+          label="Alarm"
+          padding="0.75rem 1rem"
+          @click="
+            showAlarm = true;
+            alarmedCount = 0;
+          "
+        >
+          <q-badge v-if="alarmedCount > 0" color="red" floating>
+            {{ alarmedCount }}
+          </q-badge>
+        </q-btn>
+      </q-page-sticky>
+
+      <q-dialog v-model="showAlarm">
+        <q-card class="full-width" style="max-width: 1024px">
+          <q-card-section class="row items-center q-pb-none">
+            <div class="text-h6">Alarms</div>
+            <q-space />
+            <q-btn icon="close" flat round dense v-close-popup />
+          </q-card-section>
+
+          <q-card-section>
+            <q-table
+              :rows="alarmArray"
+              :columns="columns"
+              row-key="name"
+              :pagination="{ rowsPerPage: 10 }"
+              flat
+              bordered
+            >
+              <template v-slot:body="props">
+                <q-tr
+                  :props="props"
+                  :class="{ 'text-strike': props.row.notified }"
+                >
+                  <q-td key="name" :props="props" class="row items-center">
+                    <q-icon
+                      :name="
+                        props.row.icon
+                          ? `img:${props.row.icon}`
+                          : `help_outline`
+                      "
+                      size="1.5rem"
+                      class="q-mr-sm"
+                    />
+                    {{ props.row.label }}
+                  </q-td>
+
+                  <q-td key="time" :props="props">
+                    {{ props.row.displayCountdown }}
+                  </q-td>
+
+                  <q-td key="offset" :props="props">
+                    {{ props.row.offset }} minutes
+                    <q-popup-edit
+                      v-model.number="props.row.offset"
+                      title="Update delay time"
+                      buttons
+                      :validate="rangeValidation"
+                      @hide="rangeValidation"
+                      v-slot="scope"
+                    >
+                      <q-input
+                        type="number"
+                        v-model.number="scope.value"
+                        hint="Enter a number between 0 and 60"
+                        :error="errorVal"
+                        :error-message="errorValMsg"
+                        dense
+                        autofocus
+                        @keyup.enter="scope.set"
+                      />
+                    </q-popup-edit>
+                  </q-td>
+
+                  <q-td key="action" :props="props">
+                    <q-btn
+                      dense
+                      round
+                      flat
+                      color="grey"
+                      @click="removeAlarm(props)"
+                      icon="delete"
+                    >
+                      <q-tooltip class="text-body2"> Delete alarm </q-tooltip>
+                    </q-btn>
+                  </q-td>
+                </q-tr>
+              </template>
+            </q-table>
+          </q-card-section>
+        </q-card>
+      </q-dialog>
     </q-page-container>
 
     <q-footer v-if="!storagePermission" class="cookie-footer text-white">
@@ -107,6 +210,31 @@ import { defineComponent, ref, watch } from "vue";
 import { useQuasar } from "quasar";
 import useStates from "../modules/states";
 
+const columns = [
+  {
+    name: "name",
+    label: "Name",
+    align: "left",
+    field: "label",
+  },
+  {
+    name: "time",
+    label: "Time Left",
+    field: "displayCountdown",
+  },
+  {
+    name: "offset",
+    label: "Notify Early",
+    field: "offset",
+  },
+  {
+    name: "action",
+    label: "Action",
+    field: "",
+    align: "center",
+  },
+];
+
 export default defineComponent({
   name: "MainLayout",
 
@@ -114,13 +242,26 @@ export default defineComponent({
     const $q = useQuasar();
     const leftDrawerOpen = ref(false);
     const miniState = ref(false);
-    const darkMode = ref($q.dark.isActive);
-    const { storagePermission, serverOptions, selectedServer, closeCookieBox } =
-      useStates();
-
-    function setDarkMode() {
-      $q.dark.toggle();
-    }
+    const darkMode = ref(
+      localStorage.getItem("darkMode")
+        ? localStorage.getItem("darkMode") === "true"
+          ? true
+          : false
+        : $q.dark.isActive
+    );
+    const showAlarm = ref(false);
+    const {
+      storagePermission,
+      serverOptions,
+      selectedServer,
+      alarmArray,
+      closeCookieBox,
+      runAlarm,
+      evalAlarm,
+      alarmedCount,
+    } = useStates();
+    const errorVal = ref(false);
+    const errorValMsg = ref("");
 
     function toggleLeftDrawer() {
       if (window.innerWidth > 1023) miniState.value = !miniState.value;
@@ -129,20 +270,56 @@ export default defineComponent({
       }
     }
 
+    function rangeValidation(val) {
+      if (val < 0 || val > 60) {
+        errorVal.value = true;
+        errorValMsg.value = "The value must be between 0 and 60!";
+        return false;
+      }
+      errorVal.value = false;
+      errorValMsg.value = "";
+      return true;
+    }
+
+    function removeAlarm(props) {
+      props.row.remove = true;
+      evalAlarm();
+      $q.notify({
+        message: `${props.row.label} alarm deleted!`,
+        color: "negative",
+        avatar: props.row.icon
+          ? props.row.icon
+          : "/img/game-icons/unknown-white.svg",
+      });
+    }
+
+    $q.dark.set(darkMode.value); //Set dark mode on initial render
+
+    runAlarm();
+
     watch(darkMode, () => {
       $q.dark.set(darkMode.value);
+      if (storagePermission.value)
+        localStorage.setItem("darkMode", darkMode.value);
     });
 
     return {
+      alarmArray,
+      columns,
       leftDrawerOpen,
       miniState,
       darkMode,
+      showAlarm,
       storagePermission,
       selectedServer,
       serverOptions,
+      errorVal,
+      errorValMsg,
+      alarmedCount,
       toggleLeftDrawer,
-      setDarkMode,
       closeCookieBox,
+      removeAlarm,
+      rangeValidation,
     };
   },
 });

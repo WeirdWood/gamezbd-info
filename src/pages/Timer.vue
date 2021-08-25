@@ -14,7 +14,7 @@
               </span>
             </p>
             <time-label
-              :name="clock.isDay ? 'Day time' : 'Night time'"
+              :name="clock.isDay ? 'Night time' : 'Day time'"
               :secs="
                 clock.isDay
                   ? clock.secsUntilNightStart
@@ -28,16 +28,21 @@
             <time-label
               :name="`Imperial crafting reset`"
               :secs="clock.secsUntilImperialReset"
+              :icon="'img/game-icons/imperial-crafting-icon.png'"
               :loading="isLoading"
+              :disableAlarmBtn="serverStat.label !== 'up'"
             />
             <time-label
               :name="`Imperial trading reset`"
               :secs="clock.secsUntilImperialTradingReset"
+              :icon="'img/game-icons/imperial-trading-icon.png'"
               :loading="isLoading"
+              :disableAlarmBtn="serverStat.label !== 'up'"
             />
             <time-label
               :name="`Black Spirit's Adventure reset`"
               :secs="clock.secsUntilJumanjiReset"
+              :icon="'img/game-icons/dice-game-icon.png'"
             />
             <br />
             <div class="row items-center">

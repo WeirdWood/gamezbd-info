@@ -15,7 +15,7 @@
 <script>
 import { defineComponent, computed } from "vue";
 
-const columnsData = [
+const columns = [
   {
     name: "name",
     label: "GRADE",
@@ -55,11 +55,7 @@ export default defineComponent({
         finalRate: round(baseRate.rate + props.bonus),
       }));
     });
-
-    const columns = computed(() => {
-      return columnsData;
-    });
-
+    
     return {
       rows,
       columns,
