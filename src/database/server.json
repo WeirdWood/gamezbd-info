@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "label": "NA Server",
+    "value": "NA"
+  },
+  {
+    "id": 2,
+    "label": "EU Server",
+    "value": "EU"
+  }
+]
