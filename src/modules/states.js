@@ -15,6 +15,7 @@ const state = reactive({
     ? JSON.parse(localStorage.getItem("alarms"))
     : [],
   alarmedCount: 0,
+  alarmStoreNeedsUpdate: false,
 });
 
 if (!localStorage.getItem("server") && state.storagePermission)
@@ -28,6 +29,7 @@ watch(
     } else {
       localStorage.removeItem("server");
     }
+    location.reload();
   }
 );
 
@@ -51,13 +53,20 @@ export default function useStates() {
     return [firstData, secondData];
   };
 
-  const clockTime = (seconds) => {
+  const clockTime = (seconds, isVell = false) => {
     seconds = Number(seconds);
     var d = Math.floor(seconds / (3600 * 24));
     var h = Math.floor((seconds % (3600 * 24)) / 3600);
     var m = Math.floor((seconds % 3600) / 60);
     //var s = Math.floor(seconds % 60);
 
+    if (isVell && d === 0 && h === 0 && m < 30) {
+      return (
+        "spawning (" +
+        (m > 0 ? m + (m == 1 ? " minute" : " minutes") : "<1 minute") +
+        ")"
+      );
+    }
     var dDisplay = d > 0 ? d + (d == 1 ? " day, " : " days, ") : "";
     var hDisplay = h > 0 ? h + (h == 1 ? " hour, " : " hours, ") : "";
     var mDisplay = m > 0 ? m + (m == 1 ? " minute" : " minutes") : "<1 minute";
@@ -73,13 +82,14 @@ export default function useStates() {
     return mDisplay;
   };
 
-  const addToAlarm = (seconds, label, offset = 0, icon = undefined) => {
-    let reachDate = Date.now() + seconds * 1000;
+  const addToAlarm = (reachDate, label, offset = 0, icon = undefined) => {
+    let notified = reachDate < Date.now() ? true : false;
     state.alarmArray.push({
       icon: icon,
       label: label,
       time: reachDate, //UTC miliseconds of the goal time
-      offset: offset, //In minutes
+      offset: offset, //In minutes,
+      notified: notified,
     });
 
     //Deduplicating alarms
@@ -94,36 +104,36 @@ export default function useStates() {
 
     state.alarmArray = sortBy(state.alarmArray, "time");
 
-    if (state.storagePermission) {
-      try {
-        localStorage.setItem("alarms", JSON.stringify(state.alarmArray));
-      }
-      catch(err) {
-        localStorage.removeItem("alarms");
-      }
-    }
+    storeAlarm();
 
     Notify.create({
       message: `${label} alarm added!`,
       color: "positive",
-      avatar: icon ? icon : "/img/game-icons/unknown-white.svg",
+      avatar: icon ? icon : "/img/game-icons/unknown.png",
     });
   };
 
   const evalAlarm = () => {
     let d = Date.now();
-    state.alarmArray.forEach((element) => {
+    for (const element of state.alarmArray) {
       let secs = (element.time - d) / 1000;
+      if (secs <= 60 * 5) element.close = true;
       if (secs <= -(60 * 5)) element.remove = true;
-      else if (secs <= 0) element.displayCountdown = reverseClockTime(secs);
-      else element.displayCountdown = clockTime(secs);
+      else if (secs <= 0) {
+        element.displayCountdown = reverseClockTime(secs);
+        element.reached = true;
+      } else {
+        if (element.label.includes("Vell"))
+          element.displayCountdown = clockTime(secs, true);
+        else element.displayCountdown = clockTime(secs);
+      }
 
       let alarmPoint = element.time - element.offset * 60 * 1000;
       if (d < alarmPoint) {
         element.notified = false;
       } else if (!element.notified) {
         //Ring the alarm
-        alarmAudio.play();
+        element.notified = true;
         state.alarmedCount++;
 
         Notify.create({
@@ -132,21 +142,55 @@ export default function useStates() {
               ? `${element.label} alarm reached!`
               : `${element.label} starting in ${element.displayCountdown}!`,
           color: "positive",
-          avatar: element.icon
-            ? element.icon
-            : "/img/game-icons/unknown-white.svg",
+          avatar: element.icon ? element.icon : "/img/game-icons/unknown.png",
           timeout: 20000,
           progress: true,
         });
 
-        element.notified = true;
+        alarmAudio.play();
       }
-    });
+    }
+
+    let beforeRemoveLength = state.alarmArray.length;
     state.alarmArray = state.alarmArray.filter((item) => !item.remove);
+
+    if (state.alarmArray.length < beforeRemoveLength) storeAlarm();
+
+    if (state.alarmStoreNeedsUpdate) {
+      storeAlarm();
+      state.alarmStoreNeedsUpdate = false;
+    }
   };
 
   const runAlarm = () => {
-    let interval = setInterval(evalAlarm, 1000);
+    return setInterval(evalAlarm, 2000);
+  };
+
+  const storeAlarm = () => {
+    if (state.storagePermission) {
+      try {
+        localStorage.setItem("alarms", JSON.stringify(state.alarmArray));
+      } catch (err) {
+        localStorage.removeItem("alarms");
+      }
+    }
+  };
+
+  const getNextOccuranceOfUTCDayAndHour = (now, day, hour, minute = 0) => {
+    let d = new Date(now);
+    let utcDate = new Date(
+      Date.UTC(
+        d.getUTCFullYear(),
+        d.getUTCMonth(),
+        d.getUTCDate() + ((7 + day - d.getUTCDay()) % 7),
+        hour,
+        minute
+      )
+    );
+    if (utcDate < now) {
+      utcDate.setUTCDate(utcDate.getUTCDate() + 7);
+    }
+    return utcDate;
   };
 
   return {
@@ -155,8 +199,11 @@ export default function useStates() {
     serverOptions,
     splitResponse,
     clockTime,
+    reverseClockTime,
     addToAlarm,
     runAlarm,
     evalAlarm,
+    storeAlarm,
+    getNextOccuranceOfUTCDayAndHour,
   };
 }

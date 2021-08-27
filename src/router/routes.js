@@ -9,6 +9,7 @@ const routes = [
       { path: '/market-calculator', component: () => import('pages/MarketCalculator.vue') },
       { path: '/timer', component: () => import('pages/Timer.vue') },
       { path: '/info', component: () => import('pages/Info.vue') },
+      { path: '/boss-timer', component: () => import('pages/BossTimer.vue') },
     ]
   },
 

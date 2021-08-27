@@ -18,7 +18,7 @@
     <add-alarm-btn
       :disable="loading || disableAlarmBtn"
       :name="name"
-      :secs="secs"
+      :date="reachMs"
       :icon="icon"
     />
   </p>
@@ -71,7 +71,11 @@ export default {
       else return ret.toLocaleString("en-US");
     });
 
-    return { clockTime, reachDate, addToAlarm };
+    const reachMs = computed(() => {
+      return Date.now() + props.secs * 1000;
+    });
+
+    return { clockTime, reachDate, reachMs, addToAlarm };
   },
 };
 </script>

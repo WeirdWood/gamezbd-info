@@ -54,6 +54,14 @@
 
             <q-item-section> Market Calculator </q-item-section>
           </q-item>
+          <q-item to="/boss-timer" exact clickable v-ripple>
+            <q-item-section avatar>
+              <q-icon name="pending_actions" />
+            </q-item-section>
+
+            <q-item-section> Boss Timer </q-item-section>
+          </q-item>
+
           <q-item to="/timer" exact clickable v-ripple>
             <q-item-section avatar>
               <q-icon name="timer" />
@@ -123,16 +131,24 @@
               <template v-slot:body="props">
                 <q-tr
                   :props="props"
-                  :class="{ 'text-strike': props.row.notified }"
+                  :class="{
+                    'text-strike text-weight-light': props.row.reached,
+                    'text-negative': props.row.close && !props.row.reached,
+                    'text-italic': props.row.notified,
+                  }"
                 >
-                  <q-td key="name" :props="props" class="row items-center">
+                  <q-td
+                    key="name"
+                    :props="props"
+                    class="row items-center no-wrap"
+                  >
                     <q-icon
                       :name="
                         props.row.icon
                           ? `img:${props.row.icon}`
-                          : `help_outline`
+                          : `img:/img/game-icons/unknown.png`
                       "
-                      size="1.5rem"
+                      size="2rem"
                       class="q-mr-sm"
                     />
                     {{ props.row.label }}
@@ -206,7 +222,7 @@
 </template>
 
 <script>
-import { defineComponent, ref, watch } from "vue";
+import { defineComponent, ref, watch, onMounted, onBeforeUnmount } from "vue";
 import { useQuasar } from "quasar";
 import useStates from "../modules/states";
 
@@ -259,9 +275,19 @@ export default defineComponent({
       runAlarm,
       evalAlarm,
       alarmedCount,
+      alarmStoreNeedsUpdate,
     } = useStates();
     const errorVal = ref(false);
     const errorValMsg = ref("");
+    const interval = ref(null);
+
+    onMounted(() => {
+      interval.value = runAlarm();
+    });
+
+    onBeforeUnmount(() => {
+      clearInterval(interval.value);
+    });
 
     function toggleLeftDrawer() {
       if (window.innerWidth > 1023) miniState.value = !miniState.value;
@@ -278,6 +304,7 @@ export default defineComponent({
       }
       errorVal.value = false;
       errorValMsg.value = "";
+      alarmStoreNeedsUpdate.value = true;
       return true;
     }
 
@@ -287,15 +314,11 @@ export default defineComponent({
       $q.notify({
         message: `${props.row.label} alarm deleted!`,
         color: "negative",
-        avatar: props.row.icon
-          ? props.row.icon
-          : "/img/game-icons/unknown-white.svg",
+        avatar: props.row.icon ? props.row.icon : "/img/game-icons/unknown.png",
       });
     }
 
     $q.dark.set(darkMode.value); //Set dark mode on initial render
-
-    runAlarm();
 
     watch(darkMode, () => {
       $q.dark.set(darkMode.value);

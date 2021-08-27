@@ -4,7 +4,7 @@
         <q-card flat class="col-md col-sm-12 col-xs-12 q-px-md q-py-lg">
           <q-card-section class="q-pa-none">
             <h5 class="q-ma-none q-pb-md text-weight-regular text-primary">
-              Patch Notes
+              GameZ Patch Notes
             </h5>
             <expandable-info  :data="patchData" :groupName="`patchGroup`" />
           </q-card-section>

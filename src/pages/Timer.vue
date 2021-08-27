@@ -26,23 +26,27 @@
               :secs="clock.secsUntilDailyReset"
             />
             <time-label
+              :name="`Barter points reset`"
+              :secs="clock.secsUntilBarterPointReset"
+            />
+            <time-label
               :name="`Imperial crafting reset`"
               :secs="clock.secsUntilImperialReset"
-              :icon="'img/game-icons/imperial-crafting-icon.png'"
+              :icon="'/img/game-icons/imperial-crafting-icon.png'"
               :loading="isLoading"
               :disableAlarmBtn="serverStat.label !== 'up'"
             />
             <time-label
               :name="`Imperial trading reset`"
               :secs="clock.secsUntilImperialTradingReset"
-              :icon="'img/game-icons/imperial-trading-icon.png'"
+              :icon="'/img/game-icons/imperial-trading-icon.png'"
               :loading="isLoading"
               :disableAlarmBtn="serverStat.label !== 'up'"
             />
             <time-label
               :name="`Black Spirit's Adventure reset`"
               :secs="clock.secsUntilJumanjiReset"
-              :icon="'img/game-icons/dice-game-icon.png'"
+              :icon="'/img/game-icons/dice-game-icon.png'"
             />
             <br />
             <div class="row items-center">
@@ -78,7 +82,7 @@
         </q-card>
         <q-card flat class="col-md col-sm-12 col-xs-12 q-px-md q-py-lg">
           <h5 class="q-ma-none q-pb-md text-weight-regular text-primary">
-            Weekend Event
+            GameZ Weekend Event
           </h5>
           <q-card-section class="q-pa-none text-body2">
             <p class="weekend-event--body">
@@ -134,7 +138,7 @@
 </template>
 
 <script>
-import { onMounted, reactive, computed, onBeforeMount, ref, watch } from "vue";
+import { onMounted, reactive, computed, onBeforeMount, ref } from "vue";
 import timeLabel from "../components/timeLabel.vue";
 import useStates from "../modules/states";
 import weekendEventData from "../database/weekendEvent.json";
@@ -163,14 +167,14 @@ export default {
       secsUntilImperialReset: 0,
       secsUntilImperialTradingReset: 0,
       secsUntilJumanjiReset: 0,
-      secsUntilVellSpawnNA: 0,
-      secsUntilVellSpawnEU: 0,
+      secsUntilBarterPointReset: 0,
     });
     const serverStat = ref({});
     const weekendEvents = reactive(weekendEventData);
     const thisWeekIndex = ref(0);
     const nextWeekIndex = ref(1);
-    const { selectedServer, clockTime } = useStates();
+    const { selectedServer, clockTime, getNextOccuranceOfUTCDayAndHour } =
+      useStates();
     const isLoading = ref(true);
     const error = ref(false);
 
@@ -188,12 +192,6 @@ export default {
       updateClock();
       updateCountdowns();
       updateWeekendEvent();
-    });
-
-    watch(selectedServer, async () => {
-      isLoading.value = true;
-      if (selectedServer.value.value === "NA") await getServerData(NAUrl);
-      else await getServerData(EUUrl);
     });
 
     async function getServerData(url) {
@@ -252,23 +250,12 @@ export default {
         clock.secsUntilJumanjiReset -= 60 * 60 * 24;
       }
 
-      let secsTillNextThursdayNA =
-        (getNextOccuranceOfUTCDayAndHour(d, 4, 23) - Date.now()) / 1000;
-      let secsTillNextSundayNA =
-        (getNextOccuranceOfUTCDayAndHour(d, 7, 23) - Date.now()) / 1000;
-      clock.secsUntilVellSpawnNA =
-        secsTillNextThursdayNA < secsTillNextSundayNA
-          ? secsTillNextThursdayNA
-          : secsTillNextSundayNA;
-
-      let secsTillNextThursdayEU =
-        (getNextOccuranceOfUTCDayAndHour(d, 4, 16) - Date.now()) / 1000;
-      let secsTillNextSundayEU =
-        (getNextOccuranceOfUTCDayAndHour(d, 7, 16) - Date.now()) / 1000;
-      clock.secsUntilVellSpawnEU =
-        secsTillNextThursdayEU < secsTillNextSundayEU
-          ? secsTillNextThursdayEU
-          : secsTillNextSundayEU;
+      // Barter reset is at 6am UTC
+      clock.secsUntilBarterPointReset =
+        60 * 60 * 24 - ((rlDayElapsedS - 6 * 60 * 60) % (60 * 60 * 24));
+      if (clock.secsUntilBarterPointReset > 60 * 60 * 24) {
+        clock.secsUntilBarterPointReset -= 60 * 60 * 24;
+      }
     }
 
     // This version gets called far more often but doesn't update if
@@ -360,16 +347,6 @@ export default {
 
       var diffInWeeks = Math.floor(diffInDays / 7);
       return diffInWeeks;
-    }
-
-    function getNextOccuranceOfUTCDayAndHour(now, day, hour) {
-      let d = new Date(now);
-      d.setUTCDate(d.getUTCDate() + ((7 + day - d.getUTCDay()) % 7));
-      d.setUTCHours(hour, 0, 0, 0);
-      if (d < now) {
-        d.setUTCDate(d.getUTCDate() + 7);
-      }
-      return d;
     }
 
     const ampm = computed(() => (clock.inGameHour < 12 ? "AM" : "PM"));
