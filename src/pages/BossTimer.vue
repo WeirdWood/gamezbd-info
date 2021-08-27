@@ -337,12 +337,13 @@ export default {
           : nextSundayVellTime;
 
       for (const channel of channelOptions) {
-        bossArray.value.push({
-          name: "Vell",
-          icon: `/img/game-icons/${bossIcon["Vell"]}`,
-          channel: channel,
-          time: nextVellTime,
-        });
+        if (formValues.selectedChannels.includes(channel))
+          bossArray.value.push({
+            name: "Vell",
+            icon: `/img/game-icons/${bossIcon["Vell"]}`,
+            channel: channel,
+            time: nextVellTime,
+          });
       }
 
       bossArray.value = sortBy(bossArray.value, "time");
