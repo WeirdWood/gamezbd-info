@@ -82,7 +82,8 @@
             :pagination="{ rowsPerPage: 0 }"
             flat
             bordered
-            hide-bottom
+            hide-pagination
+            :loading="isLoading"
           >
             <template v-slot:body="props">
               <q-tr
@@ -130,6 +131,12 @@
               </q-tr>
             </template>
           </q-table>
+
+          <div v-if="error" class="q-pa-md">
+            <span class="text-negative">
+              Could not load data, please try again later.
+            </span>
+          </div>
         </q-card-section>
       </q-card>
     </q-page>
@@ -290,28 +297,30 @@ export default {
     }
 
     function mapBossData(data) {
-      bossArray.value.length = 0;
+      if (data) {
+        bossArray.value.length = 0;
 
-      data.forEach((element) => {
-        if (formValues.hideHuntingBoss) {
-          if (huntingBossNames.includes(element.name)) return;
-        }
-        if (!formValues.selectedChannels.includes(element.server)) return;
-        if (element.name === "Vell") return;
+        data.forEach((element) => {
+          if (formValues.hideHuntingBoss) {
+            if (huntingBossNames.includes(element.name)) return;
+          }
+          if (!formValues.selectedChannels.includes(element.server)) return;
+          if (element.name === "Vell") return;
 
-        let icon = bossIcon[element.name]
-          ? `/img/game-icons/${bossIcon[element.name]}`
-          : "/img/game-icons/unknown.png";
-        let time = Date.parse(element.time);
-        let notified = time < Date.now() ? true : false;
-        bossArray.value.push({
-          name: element.name,
-          icon: icon,
-          channel: element.server,
-          time: time,
-          notified: notified,
+          let icon = bossIcon[element.name]
+            ? `/img/game-icons/${bossIcon[element.name]}`
+            : "/img/game-icons/unknown.png";
+          let time = Date.parse(element.time);
+          let notified = time < Date.now() ? true : false;
+          bossArray.value.push({
+            name: element.name,
+            icon: icon,
+            channel: element.server,
+            time: time,
+            notified: notified,
+          });
         });
-      });
+      }
 
       //Adding custom Vell time that account for the extra 30mins spawn time
       var d = new Date();
