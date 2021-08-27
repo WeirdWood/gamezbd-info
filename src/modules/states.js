@@ -118,7 +118,7 @@ export default function useStates() {
     for (const element of state.alarmArray) {
       let secs = (element.time - d) / 1000;
       if (secs <= 60 * 5) element.close = true;
-      if (secs <= -(60 * 5)) element.remove = true;
+      if (secs <= -(60 * 20)) element.remove = true; //This needs to last longer than boss timer or inAlarm check will fail.
       else if (secs <= 0) {
         element.displayCountdown = reverseClockTime(secs);
         element.reached = true;
