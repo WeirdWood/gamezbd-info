@@ -148,7 +148,7 @@ module.exports = configure(function (ctx) {
       manifest: {
         name: `GamezBD Info`,
         short_name: `GamezBD Info`,
-        description: `GamezBD Info - A community made website that provide various convenient tools made for GamezBD's specific features. Include Failstack / Enhance Calculator, Market Calculator taking account of premium's silver collection bonus, Weekend Events Schedule, various Timers including game times / daily reset / imperial cooking alchemy delivery reset / imperial trading delivery reset / dice game reset / Vell Schedule / Server Status, Misc Infos like current running Events - Recent Patch Notes, and some Useful Links.`,
+        description: `GamezBD Info - A community made website that provide various convenient tools made for GamezBD's specific features. Include Failstack / Enhance Calculator, Market Calculator taking account of premium's silver collection bonus, Weekend Events Schedule, various Timers including game times / daily reset / imperial cooking alchemy delivery reset / imperial trading delivery reset / dice game reset / Boss timers / Server Status, Misc Infos like current running Events - Recent Patch Notes, and some Useful Links.`,
         display: "standalone",
         orientation: "portrait",
         background_color: "#ffffff",
