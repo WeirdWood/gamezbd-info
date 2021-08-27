@@ -120,7 +120,7 @@
 
                 <q-td key="action" :props="props">
                   <add-alarm-btn
-                    :disable="isLoading"
+                    :disable="isLoading || props.row.reached"
                     :name="`${props.row.name} ${stripChName(
                       props.row.channel
                     )}`"
