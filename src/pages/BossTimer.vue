@@ -364,6 +364,8 @@ export default {
           else element.displayCountdown = clockTime(secs);
         }
 
+        bossArray.value = bossArray.value.filter((item) => !item.remove);
+
         let alarmPoint =
           element.time - formValues.globalEarlyOffset * 60 * 1000;
         if (d < alarmPoint) {
@@ -397,8 +399,6 @@ export default {
           }
         }
       }
-
-      bossArray.value = bossArray.value.filter((item) => !item.remove);
     }
 
     function runTimer() {

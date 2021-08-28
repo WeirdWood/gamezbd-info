@@ -118,7 +118,8 @@ export default function useStates() {
     for (const element of state.alarmArray) {
       let secs = (element.time - d) / 1000;
       if (secs <= 60 * 5) element.close = true;
-      if (secs <= -(60 * 20)) element.remove = true; //This needs to last longer than boss timer or inAlarm check will fail.
+      if (secs <= -(60 * 20)) element.remove = true;
+      //This needs to last longer than boss timer or inAlarm check will fail.
       else if (secs <= 0) {
         element.displayCountdown = reverseClockTime(secs);
         element.reached = true;
@@ -126,6 +127,16 @@ export default function useStates() {
         if (element.label.includes("Vell"))
           element.displayCountdown = clockTime(secs, true);
         else element.displayCountdown = clockTime(secs);
+      }
+
+      let beforeRemoveLength = state.alarmArray.length;
+      state.alarmArray = state.alarmArray.filter((item) => !item.remove);
+
+      if (state.alarmArray.length < beforeRemoveLength) storeAlarm();
+
+      if (state.alarmStoreNeedsUpdate) {
+        storeAlarm();
+        state.alarmStoreNeedsUpdate = false;
       }
 
       let alarmPoint = element.time - element.offset * 60 * 1000;
@@ -149,16 +160,6 @@ export default function useStates() {
 
         alarmAudio.play();
       }
-    }
-
-    let beforeRemoveLength = state.alarmArray.length;
-    state.alarmArray = state.alarmArray.filter((item) => !item.remove);
-
-    if (state.alarmArray.length < beforeRemoveLength) storeAlarm();
-
-    if (state.alarmStoreNeedsUpdate) {
-      storeAlarm();
-      state.alarmStoreNeedsUpdate = false;
     }
   };
 
