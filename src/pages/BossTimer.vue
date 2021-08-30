@@ -364,13 +364,11 @@ export default {
           else element.displayCountdown = clockTime(secs);
         }
 
-        bossArray.value = bossArray.value.filter((item) => !item.remove);
-
         let alarmPoint =
           element.time - formValues.globalEarlyOffset * 60 * 1000;
         if (d < alarmPoint) {
           element.notified = false;
-        } else if (!element.notified) {
+        } else if (!element.notified && !element.remove) {
           element.inAlarm = false;
           let alarmName = element.name + " " + stripChName(element.channel);
           for (const alarm of alarmArray.value) {
@@ -399,6 +397,8 @@ export default {
           }
         }
       }
+
+      bossArray.value = bossArray.value.filter((item) => !item.remove);
     }
 
     function runTimer() {

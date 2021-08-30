@@ -129,20 +129,10 @@ export default function useStates() {
         else element.displayCountdown = clockTime(secs);
       }
 
-      let beforeRemoveLength = state.alarmArray.length;
-      state.alarmArray = state.alarmArray.filter((item) => !item.remove);
-
-      if (state.alarmArray.length < beforeRemoveLength) storeAlarm();
-
-      if (state.alarmStoreNeedsUpdate) {
-        storeAlarm();
-        state.alarmStoreNeedsUpdate = false;
-      }
-
       let alarmPoint = element.time - element.offset * 60 * 1000;
       if (d < alarmPoint) {
         element.notified = false;
-      } else if (!element.notified) {
+      } else if (!element.notified && !element.remove) {
         //Ring the alarm
         element.notified = true;
         state.alarmedCount++;
@@ -160,6 +150,16 @@ export default function useStates() {
 
         alarmAudio.play();
       }
+    }
+
+    let beforeRemoveLength = state.alarmArray.length;
+    state.alarmArray = state.alarmArray.filter((item) => !item.remove);
+
+    if (state.alarmArray.length < beforeRemoveLength) storeAlarm();
+
+    if (state.alarmStoreNeedsUpdate) {
+      storeAlarm();
+      state.alarmStoreNeedsUpdate = false;
     }
   };
 
