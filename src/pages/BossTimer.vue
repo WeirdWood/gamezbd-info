@@ -212,6 +212,7 @@ export default {
       clockTime,
       reverseClockTime,
       getNextOccuranceOfUTCDayAndHour,
+      alarmAudio,
     } = useStates();
     const channelOptions =
       selectedServer.value.value === "NA" ? optionsNA : optionsEU;
@@ -229,7 +230,7 @@ export default {
     const fetchInterval = ref(true);
 
     var bossData;
-    var alarmBossAudio = new Audio(require("../assets/alarm-effect.mp3"));
+    //var alarmBossAudio = new Audio(require("../assets/alarm-effect.mp3"));
 
     //fetch local storage configs
     if (!storagePermission.value) {
@@ -397,7 +398,7 @@ export default {
               progress: true,
             });
 
-            if (formValues.useSound) await alarmBossAudio.play();
+            if (formValues.useSound) await alarmAudio.play();
           }
         }
       }

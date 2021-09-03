@@ -3,8 +3,6 @@ import { Notify } from "quasar";
 import sortBy from "lodash.sortby";
 import serverOptions from "../database/server.json";
 
-var alarmAudio = new Audio(require("../assets/alarm-effect.mp3"));
-
 const state = reactive({
   storagePermission:
     localStorage.getItem("storagePermission") === "true" ? true : false,
@@ -30,6 +28,8 @@ watch(
 );
 
 export default function useStates() {
+  var alarmAudio = new Audio(require("../assets/alarm-effect.mp3"));
+
   const closeCookieBox = () => {
     localStorage.setItem("storagePermission", "true");
     state.storagePermission = true;
@@ -192,6 +192,7 @@ export default function useStates() {
 
   return {
     ...toRefs(state),
+    alarmAudio,
     closeCookieBox,
     serverOptions,
     splitResponse,
