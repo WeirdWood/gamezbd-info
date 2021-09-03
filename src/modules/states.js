@@ -3,7 +3,7 @@ import { Notify } from "quasar";
 import sortBy from "lodash.sortby";
 import serverOptions from "../database/server.json";
 
-var alarmAudio = new Audio("/alarm-effect.mp3");
+var alarmAudio = new Audio(require("../assets/alarm-effect.mp3"));
 
 const state = reactive({
   storagePermission:
@@ -18,17 +18,13 @@ const state = reactive({
   alarmStoreNeedsUpdate: false,
 });
 
-if (!localStorage.getItem("server") && state.storagePermission)
+if (!localStorage.getItem("server"))
   localStorage.setItem("server", JSON.stringify(state.selectedServer));
 
 watch(
   () => state.selectedServer,
   () => {
-    if (state.storagePermission) {
-      localStorage.setItem("server", JSON.stringify(state.selectedServer));
-    } else {
-      localStorage.removeItem("server");
-    }
+    localStorage.setItem("server", JSON.stringify(state.selectedServer));
     location.reload();
   }
 );

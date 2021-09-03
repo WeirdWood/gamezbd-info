@@ -138,7 +138,7 @@
 </template>
 
 <script>
-import { onMounted, reactive, computed, onBeforeMount, ref } from "vue";
+import { onMounted, reactive, computed, ref } from "vue";
 import timeLabel from "../components/timeLabel.vue";
 import useStates from "../modules/states";
 import weekendEventData from "../database/weekendEvent.json";
@@ -178,10 +178,10 @@ export default {
     const isLoading = ref(true);
     const error = ref(false);
 
-    onBeforeMount(async () => {
+    (async () => {
       if (selectedServer.value.value === "NA") await getServerData(NAUrl);
       else await getServerData(EUUrl);
-    });
+    })();
 
     onMounted(() => {
       var baseTick = 4444.444444;

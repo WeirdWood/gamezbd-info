@@ -144,7 +144,7 @@
 </template>
 
 <script>
-import { reactive, ref, onBeforeMount, onBeforeUnmount, watch } from "vue";
+import { reactive, ref, onBeforeUnmount, watch } from "vue";
 import { useQuasar } from "quasar";
 import useStates from "../modules/states";
 import sortBy from "lodash.sortby";
@@ -229,48 +229,46 @@ export default {
     const fetchInterval = ref(true);
 
     var bossData;
-    var alarmBossAudio = new Audio("/alarm-effect.mp3");
+    var alarmBossAudio = new Audio(require("../assets/alarm-effect.mp3"));
 
-    onBeforeMount(async () => {
+    //fetch local storage configs
+    if (!storagePermission.value) {
+      localStorage.removeItem("bossConfig");
+    } else if (localStorage.getItem("bossConfig")) {
+      try {
+        let bossConfig = JSON.parse(localStorage.getItem("bossConfig"));
+        if (bossConfig.server === selectedServer.value.value)
+          formValues.selectedChannels = bossConfig.selectedChannels
+            ? bossConfig.selectedChannels
+            : formValues.selectedChannels;
+        formValues.hideHuntingBoss =
+          bossConfig.hideHuntingBoss === false
+            ? bossConfig.hideHuntingBoss
+            : formValues.hideHuntingBoss;
+        formValues.globalEarlyOffset = bossConfig.globalEarlyOffset
+          ? bossConfig.globalEarlyOffset
+          : formValues.globalEarlyOffset;
+        formValues.useSound = bossConfig.useSound
+          ? bossConfig.useSound
+          : formValues.useSound;
+      } catch (e) {
+        localStorage.removeItem("bossConfig");
+      }
+    }
+
+    //fetch boss data and initiate intervals
+    (async () => {
       await getBossData();
       runFetchInterval();
       if (!error.value && !isLoading.value) {
         evalTimer();
         runTimer();
       }
-
-      if (!storagePermission.value) {
-        localStorage.removeItem("bossConfig");
-      } else if (localStorage.getItem("bossConfig")) {
-        try {
-          let bossConfig = JSON.parse(localStorage.getItem("bossConfig"));
-          if (bossConfig.server === selectedServer.value.value)
-            formValues.selectedChannels = bossConfig.selectedChannels
-              ? bossConfig.selectedChannels
-              : formValues.selectedChannels;
-          formValues.hideHuntingBoss =
-            bossConfig.hideHuntingBoss === false
-              ? bossConfig.hideHuntingBoss
-              : formValues.hideHuntingBoss;
-          formValues.globalEarlyOffset = bossConfig.globalEarlyOffset
-            ? bossConfig.globalEarlyOffset
-            : formValues.globalEarlyOffset;
-          formValues.useSound = bossConfig.useSound
-            ? bossConfig.useSound
-            : formValues.useSound;
-        } catch (e) {
-          localStorage.removeItem("bossConfig");
-        }
-      }
-    });
+    })();
 
     onBeforeUnmount(() => {
       clearInterval(interval.value);
       fetchInterval.value = false;
-
-      if (storagePermission.value) {
-        localStorage.setItem("bossConfig", JSON.stringify(formValues));
-      }
     });
 
     watch(
@@ -280,6 +278,12 @@ export default {
         evalTimer();
       }
     );
+
+    watch(formValues, () => {
+      if (storagePermission.value) {
+        localStorage.setItem("bossConfig", JSON.stringify(formValues));
+      }
+    });
 
     async function getBossData() {
       try {

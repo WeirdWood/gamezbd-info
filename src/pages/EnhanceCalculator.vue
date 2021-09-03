@@ -163,15 +163,7 @@
 </template>
 
 <script>
-import {
-  defineComponent,
-  reactive,
-  ref,
-  watch,
-  computed,
-  onMounted,
-  onBeforeUnmount,
-} from "vue";
+import { defineComponent, reactive, ref, watch, computed } from "vue";
 import useStates from "../modules/states";
 import itemTypeData from "../database/itemType.json";
 import EnhanceTable from "components/enhanceTable.vue";
@@ -198,6 +190,25 @@ export default defineComponent({
     const simSelectedGrade = ref(0);
     const simResultArr = reactive([]);
     const { storagePermission } = useStates();
+
+    if (!storagePermission.value) {
+      localStorage.removeItem("enhanceConfig");
+    } else if (localStorage.getItem("enhanceConfig")) {
+      try {
+        let enhanceConfig = JSON.parse(localStorage.getItem("enhanceConfig"));
+        formValues.premium = enhanceConfig.premium
+          ? enhanceConfig.premium
+          : formValues.premium;
+        formValues.event = enhanceConfig.event
+          ? enhanceConfig.event
+          : formValues.event;
+        formValues.formula = enhanceConfig.formula
+          ? enhanceConfig.formula
+          : formValues.formula;
+      } catch (e) {
+        localStorage.removeItem("enhanceConfig");
+      }
+    }
 
     function filterFn(val, update) {
       if (val === "") {
@@ -241,33 +252,6 @@ export default defineComponent({
       }
     }
 
-    onMounted(() => {
-      if (!storagePermission.value) {
-        localStorage.removeItem("enhanceConfig");
-      } else if (localStorage.getItem("enhanceConfig")) {
-        try {
-          let enhanceConfig = JSON.parse(localStorage.getItem("enhanceConfig"));
-          formValues.premium = enhanceConfig.premium
-            ? enhanceConfig.premium
-            : formValues.premium;
-          formValues.event = enhanceConfig.event
-            ? enhanceConfig.event
-            : formValues.event;
-          formValues.formula = enhanceConfig.formula
-            ? enhanceConfig.formula
-            : formValues.formula;
-        } catch (e) {
-          localStorage.removeItem("enhanceConfig");
-        }
-      }
-    });
-
-    onBeforeUnmount(() => {
-      if (storagePermission.value) {
-        localStorage.setItem("enhanceConfig", JSON.stringify(formValues));
-      }
-    });
-
     watch(
       () => formValues.failstack,
       () => {
@@ -289,6 +273,15 @@ export default defineComponent({
       () => formValues.itemType,
       () => {
         simSelectedGrade.value = 0;
+      }
+    );
+
+    watch(
+      () => [formValues.premium, formValues.event, formValues.formula],
+      () => {
+        if (storagePermission.value) {
+          localStorage.setItem("enhanceConfig", JSON.stringify(formValues));
+        }
       }
     );
 

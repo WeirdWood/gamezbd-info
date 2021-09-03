@@ -110,14 +110,7 @@
 </template>
 
 <script>
-import {
-  defineComponent,
-  computed,
-  onBeforeUnmount,
-  onMounted,
-  reactive,
-  watch,
-} from "vue";
+import { defineComponent, computed, reactive, watch } from "vue";
 import useStates from "../modules/states";
 import familyFameBonus from "../database/familyFameBonus.json";
 
@@ -143,32 +136,27 @@ export default defineComponent({
     });
     const { storagePermission } = useStates();
 
-    onMounted(() => {
-      if (!storagePermission.value) {
+    if (!storagePermission.value) {
+      localStorage.removeItem("marketConfig");
+    } else if (localStorage.getItem("marketConfig")) {
+      try {
+        let marketConfig = JSON.parse(localStorage.getItem("marketConfig"));
+        formValues.premium = marketConfig.premium
+          ? marketConfig.premium
+          : formValues.premium;
+        formValues.value = marketConfig.value
+          ? marketConfig.value
+          : formValues.value;
+        formValues.fame = marketConfig.fame
+          ? marketConfig.fame
+          : formValues.fame;
+        formValues.merchant = marketConfig.merchant
+          ? marketConfig.merchant
+          : formValues.merchant;
+      } catch (e) {
         localStorage.removeItem("marketConfig");
-      } else if (localStorage.getItem("marketConfig")) {
-        try {
-          let marketConfig = JSON.parse(localStorage.getItem("marketConfig"));
-          formValues.premium = marketConfig.premium
-            ? marketConfig.premium
-            : formValues.premium;
-          formValues.value = marketConfig.value
-            ? marketConfig.value
-            : formValues.value;
-          formValues.fame = marketConfig.fame
-            ? marketConfig.fame
-            : formValues.fame;
-        } catch (e) {
-          localStorage.removeItem("marketConfig");
-        }
       }
-    });
-
-    onBeforeUnmount(() => {
-      if (storagePermission.value) {
-        localStorage.setItem("marketConfig", JSON.stringify(formValues));
-      }
-    });
+    }
 
     function formEval() {
       let result =
@@ -189,6 +177,20 @@ export default defineComponent({
     watch(formValues, () => {
       formEval();
     });
+
+    watch(
+      () => [
+        formValues.premium,
+        formValues.value,
+        formValues.merchant,
+        formValues.fame,
+      ],
+      () => {
+        if (storagePermission.value) {
+          localStorage.setItem("marketConfig", JSON.stringify(formValues));
+        }
+      }
+    );
 
     const collectPercent = computed(() => {
       let result =

@@ -1,29 +1,29 @@
 <template>
   <div class="container">
     <q-page class="q-mx-md q-py-lg">
-        <q-card flat class="col-md col-sm-12 col-xs-12 q-px-md q-py-lg">
-          <q-card-section class="q-pa-none">
-            <h5 class="q-ma-none q-pb-md text-weight-regular text-primary">
-              GameZ Patch Notes
-            </h5>
-            <expandable-info  :data="patchData" :groupName="`patchGroup`" />
-          </q-card-section>
-        </q-card>
+      <q-card flat class="col-md col-sm-12 col-xs-12 q-px-md q-py-lg">
+        <q-card-section class="q-pa-none">
+          <h5 class="q-ma-none q-pb-md text-weight-regular text-primary">
+            GameZ Patch Notes
+          </h5>
+          <expandable-info :data="patchData" :groupName="`patchGroup`" />
+        </q-card-section>
+      </q-card>
 
-        <q-card flat class="col-md col-sm-12 col-xs-12 q-mt-md q-px-md q-py-lg">
-          <q-card-section class="q-pa-none">
-            <h5 class="q-ma-none q-pb-md text-weight-regular text-primary">
-              Active Server Events
-            </h5>
-            <expandable-info  :data="eventData" :groupName="`eventGroup`" />
-          </q-card-section>
-        </q-card>
+      <q-card flat class="col-md col-sm-12 col-xs-12 q-mt-md q-px-md q-py-lg">
+        <q-card-section class="q-pa-none">
+          <h5 class="q-ma-none q-pb-md text-weight-regular text-primary">
+            Active Server Events
+          </h5>
+          <expandable-info :data="eventData" :groupName="`eventGroup`" />
+        </q-card-section>
+      </q-card>
     </q-page>
   </div>
 </template>
 
 <script>
-import { defineComponent, reactive, onBeforeMount } from "vue";
+import { defineComponent, reactive } from "vue";
 import useStates from "../modules/states";
 import expandableInfo from "../components/expandableInfo.vue";
 var parser = require("fast-xml-parser");
@@ -37,24 +37,24 @@ export default defineComponent({
   name: "Info",
 
   components: {
-    expandableInfo
+    expandableInfo,
   },
 
   setup() {
     const patchData = reactive({
       error: false,
       loading: true,
-      array: []
+      array: [],
     });
     const eventData = reactive({
       error: false,
       loading: true,
-      array: []
+      array: [],
     });
     const { splitResponse } = useStates();
     //const miscArr = ref(miscInfoData);
 
-    onBeforeMount(async () => {
+    (async () => {
       try {
         //My proxy is strictly whitelisted to only the main site, use a different one on develepment, see configured address in quasar.cong.js file
         var addrArr = [eventRss, patchRss];
@@ -84,7 +84,7 @@ export default defineComponent({
       } catch (err) {
         patchData.error = eventData.error = true;
       }
-    });
+    })();
 
     return { eventData, patchData };
   },
