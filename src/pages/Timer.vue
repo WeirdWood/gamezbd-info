@@ -196,24 +196,24 @@ export default {
 
     async function getServerData(url) {
       try {
-        const data = await fetch(corsServer + url).then((response) =>
-          response.json()
-        );
+        var addrArr = [url];
+        const response = await fetch(`${process.env.WORKER_URL}/cors`, {
+          method: "POST",
+          body: JSON.stringify(addrArr),
+        });
+        var data = await response.text();
+        let sliceStr = `<a class='multicorsproxy' href='${url}'>true</a>`;
+        data = data.replace(sliceStr, "");
+        data = JSON.parse(data);
         serverStat.value = data.monitor.logs[0];
         isLoading.value = false;
         updateCountdowns();
       } catch (err) {
-        //Backup in case Bridged's service goes down
+        //Backup
         try {
-          var addrArr = [url];
-          const response = await fetch(`${process.env.WORKER_URL}/cors`, {
-            method: "POST",
-            body: JSON.stringify(addrArr),
-          });
-          var data = await response.text();
-          let sliceStr = `<a class='multicorsproxy' href='${url}'>true</a>`;
-          data = data.replace(sliceStr, "");
-          data = JSON.parse(data);
+          const data = await fetch(corsServer + url).then((response) =>
+            response.json()
+          );
           serverStat.value = data.monitor.logs[0];
           isLoading.value = false;
           updateCountdowns();

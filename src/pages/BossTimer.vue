@@ -90,7 +90,7 @@
                 :props="props"
                 :class="{
                   'text-strike text-weight-light': props.row.reached,
-                  'text-negative': props.row.close && !props.row.reached,
+                  'text-primary': props.row.close && !props.row.reached,
                   'text-italic': props.row.notified,
                 }"
               >
@@ -396,9 +396,18 @@ export default {
               avatar: element.icon,
               timeout: 30000,
               progress: true,
+              actions: [
+                {
+                  label: "Dismiss",
+                  color: "white",
+                  handler: () => {
+                    /* ... */
+                  },
+                },
+              ],
             });
 
-            if (formValues.useSound) await alarmAudio.play();
+            if (formValues.useSound) alarmAudio.play();
           }
         }
       }

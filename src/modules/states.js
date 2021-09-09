@@ -2,6 +2,9 @@ import { reactive, toRefs, watch } from "vue";
 import { Notify } from "quasar";
 import sortBy from "lodash.sortby";
 import serverOptions from "../database/server.json";
+import alarmAudioSrc from "../assets/alarm-effect.mp3";
+
+var alarmAudio = new Audio(alarmAudioSrc);
 
 const state = reactive({
   storagePermission:
@@ -28,8 +31,6 @@ watch(
 );
 
 export default function useStates() {
-  var alarmAudio = new Audio(require("../assets/alarm-effect.mp3"));
-
   const closeCookieBox = () => {
     localStorage.setItem("storagePermission", "true");
     state.storagePermission = true;
@@ -142,6 +143,15 @@ export default function useStates() {
           avatar: element.icon ? element.icon : "/img/game-icons/unknown.png",
           timeout: 20000,
           progress: true,
+          actions: [
+            {
+              label: "Dismiss",
+              color: "white",
+              handler: () => {
+                /* ... */
+              },
+            },
+          ],
         });
 
         alarmAudio.play();
