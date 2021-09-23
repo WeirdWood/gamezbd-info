@@ -34,14 +34,14 @@
               :secs="clock.secsUntilImperialReset"
               :icon="'/img/game-icons/imperial-crafting-icon.png'"
               :loading="isLoading"
-              :disableAlarmBtn="serverStat.label !== 'up'"
+              :disableAlarmBtn="serverStat.new_state !== 'AV'"
             />
             <time-label
               :name="`Imperial trading reset`"
               :secs="clock.secsUntilImperialTradingReset"
               :icon="'/img/game-icons/imperial-trading-icon.png'"
               :loading="isLoading"
-              :disableAlarmBtn="serverStat.label !== 'up'"
+              :disableAlarmBtn="serverStat.new_state !== 'AV'"
             />
             <time-label
               :name="`Black Spirit's Adventure reset`"
@@ -64,16 +64,18 @@
               <span
                 v-else
                 :class="
-                  serverStat.label === 'up' ? 'text-positive' : 'text-negative'
+                  serverStat.new_state === 'AV'
+                    ? 'text-positive'
+                    : 'text-negative'
                 "
                 class="q-mx-xs"
               >
-                {{ serverStat.label }}
+                {{ serverStat.new_state === "AV" ? "Online" : "Offline" }}
                 <q-tooltip class="text-body2" :offset="[8, 8]">
                   {{
-                    (serverStat.label === "up" ? "Online" : "Offline") +
+                    (serverStat.new_state === "AV" ? "Online" : "Offline") +
                     " duration: " +
-                    serverStat.duration
+                    onlineDuration
                   }}
                 </q-tooltip>
               </span>
@@ -143,11 +145,15 @@ import timeLabel from "../components/timeLabel.vue";
 import useStates from "../modules/states";
 import weekendEventData from "../database/weekendEvent.json";
 
+// const NAUrl =
+//   "https://status.gamezbd.net/api/getMonitor/7DMKmfmWE6?m=784986409";
+// const EUUrl =
+//   "https://status.gamezbd.net/api/getMonitor/7DMKmfmWE6?m=784986444";
+// const corsServer = "https://cors.bridged.cc/";
 const NAUrl =
-  "https://status.gamezbd.net/api/getMonitor/7DMKmfmWE6?m=784986409";
+  "https://api.freshping.io/v1/public-check-state-changes/?check_id=673355";
 const EUUrl =
-  "https://status.gamezbd.net/api/getMonitor/7DMKmfmWE6?m=784986444";
-const corsServer = "https://cors.bridged.cc/";
+  "https://api.freshping.io/v1/public-check-state-changes/?check_id=673360";
 
 export default {
   name: "Timer",
@@ -177,10 +183,12 @@ export default {
       useStates();
     const isLoading = ref(true);
     const error = ref(false);
+    const fetchInterval = ref(true);
 
     (async () => {
-      if (selectedServer.value.value === "NA") await getServerData(NAUrl);
-      else await getServerData(EUUrl);
+      let url = selectedServer.value.value === "NA" ? NAUrl : EUUrl;
+      await getServerData(url);
+      runFetchInterval(url);
     })();
 
     onMounted(() => {
@@ -194,32 +202,62 @@ export default {
       updateWeekendEvent();
     });
 
+    // async function getServerData(url) {
+    //   try {
+    //     var addrArr = [url];
+    //     const response = await fetch(`${process.env.WORKER_URL}/cors`, {
+    //       method: "POST",
+    //       body: JSON.stringify(addrArr),
+    //     });
+    //     var data = await response.text();
+    //     let sliceStr = `<a class='multicorsproxy' href='${url}'>true</a>`;
+    //     data = data.replace(sliceStr, "");
+    //     data = JSON.parse(data);
+    //     serverStat.value = data.monitor.logs[0];
+    //     isLoading.value = false;
+    //     updateCountdowns();
+    //   } catch (err) {
+    //     //Backup
+    //     try {
+    //       const data = await fetch(corsServer + url).then((response) =>
+    //         response.json()
+    //       );
+    //       serverStat.value = data.monitor.logs[0];
+    //       isLoading.value = false;
+    //       updateCountdowns();
+    //     } catch (err) {
+    //       error.value = true;
+    //     }
+    //   }
+    // }
+
+    async function runFetchInterval(url) {
+      while (fetchInterval.value && !error.value) {
+        await new Promise((resolve) => setTimeout(resolve, 15 * 60 * 1000));
+        await getServerData(url);
+      }
+    }
+
     async function getServerData(url) {
       try {
-        var addrArr = [url];
-        const response = await fetch(`${process.env.WORKER_URL}/cors`, {
-          method: "POST",
-          body: JSON.stringify(addrArr),
-        });
+        const response = await fetch(url);
         var data = await response.text();
-        let sliceStr = `<a class='multicorsproxy' href='${url}'>true</a>`;
-        data = data.replace(sliceStr, "");
         data = JSON.parse(data);
-        serverStat.value = data.monitor.logs[0];
+        serverStat.value = data.results[0];
+        let tmpDate = new Date(serverStat.value.check_start_time);
+        serverStat.value.time = Date.UTC(
+          tmpDate.getUTCFullYear(),
+          tmpDate.getUTCMonth(),
+          tmpDate.getUTCDate(),
+          tmpDate.getUTCHours(),
+          tmpDate.getUTCMinutes(),
+          tmpDate.getUTCSeconds(),
+          tmpDate.getUTCMilliseconds()
+        );
         isLoading.value = false;
         updateCountdowns();
       } catch (err) {
-        //Backup
-        try {
-          const data = await fetch(corsServer + url).then((response) =>
-            response.json()
-          );
-          serverStat.value = data.monitor.logs[0];
-          isLoading.value = false;
-          updateCountdowns();
-        } catch (err) {
-          error.value = true;
-        }
+        error.value = true;
       }
     }
 
@@ -231,7 +269,7 @@ export default {
         d.getUTCDate()
       );
       var rlDayElapsedS = (Date.now() - startHour) / 1000;
-      let elapsed = (Date.now() - serverStat.value.time * 1000) / 1000;
+      let elapsed = (Date.now() - serverStat.value.time) / 1000;
 
       // Midnight UTC
       clock.secsUntilDailyReset = 24 * 60 * 60 - rlDayElapsedS;
@@ -361,6 +399,12 @@ export default {
       clock.inGameMinute < 10 ? "0" + +clock.inGameMinute : clock.inGameMinute
     );
 
+    const onlineDuration = computed(() => {
+      return clockTime(
+        (Date.now() - new Date(serverStat.value.check_start_time)) / 1000
+      );
+    });
+
     return {
       clock,
       selectedServer,
@@ -373,6 +417,7 @@ export default {
       ampm,
       displayHour,
       displayMinute,
+      onlineDuration,
       clockTime,
     };
   },

@@ -8,74 +8,20 @@
           </h5>
           <q-card-section class="q-pa-none q-gutter-y-lg">
             <div class="q-gutter-x-md q-gutter-y-none">
-              <q-checkbox v-model="formValues.premium" label="Premium" />
-              <q-checkbox v-model="formValues.event" label="Event" />
+              <q-checkbox v-model="formValues.premium" label="Premium">
+                <q-tooltip class="text-body2" :offset="[8, 8]">
+                  Premium bonus will show in the game's UI even if disabled in
+                  premium config (real chance still change accordingly)
+                </q-tooltip>
+              </q-checkbox>
+              <q-checkbox v-model="formValues.event" label="Event">
+                <q-tooltip class="text-body2" :offset="[8, 8]">
+                  Event bonus will not show in the game's UI (real chance still
+                  change accordingly)
+                </q-tooltip>
+              </q-checkbox>
             </div>
             <div class="q-gutter-md col">
-              <q-select
-                filled
-                v-model="formValues.formula"
-                label="Choose formula"
-                :options="formulaStringOptions"
-              />
-              <a
-                class="block q-mt-sm text-secondary cursor-pointer"
-                style="width: fit-content; text-decoration: none"
-                @click.prevent="alert = true"
-              >
-                <q-icon
-                  name="help_outline"
-                  style="font-size: 1.125rem; margin-top: -0.125rem"
-                />
-                What is this?
-              </a>
-              <q-dialog v-model="alert">
-                <q-card>
-                  <q-card-section>
-                    <div class="text-h6">Formula explanation</div>
-                  </q-card-section>
-                  <q-card-section class="q-pt-none">
-                    For having both premium and enhancing event active, these 2
-                    formulas differ: <br />
-                    <b>Additive</b>: failstack value * (100% + 30% + 20%), an
-                    example would be 0.5% * (1 + 0.3 + 0.2) = 0.75% <br />
-                    <b>Multiplicative</b>: failstack value * (100% + 30%) *
-                    120%, an example would be 0.5% * 1.3 * 1.2 = 0.78% <br />
-                    <br />
-                    <b>Why does this exist?</b> <br />
-                    These 2 formulas for enhancing in this server has both been
-                    weirdly confirmed by the server staff, which is just so
-                    confusing.
-                    <br />
-                    Example would be here: <br />
-                    <br />
-                    For Additive confirmation <br />
-                    <q-img
-                      :src="`/img/Additive-confirmation.jpg`"
-                      alt="additive confirmation"
-                      width="100%"
-                    />
-                    <br />
-                    For Multiplicative confirmation <br />
-                    <q-img
-                      :src="`/img/Multiplicative-confirmation.jpg`"
-                      alt="multiplicative confirmation"
-                      width="100%"
-                    />
-                    <br />
-                    <br />
-                    <b>So which one should I choose?</b> <br />
-                    For now, without concrete evidence of which is the correct
-                    formula, you can choose either. <br />
-                    In my limited experience with enhancing, I believe
-                    <b>Additive</b> is the correct formula, and I recommend
-                    using that for your calculation.
-                  </q-card-section>
-                  <q-card-actions align="right">
-                    <q-btn flat label="OK" color="primary" v-close-popup />
-                  </q-card-actions>
-                </q-card>
-              </q-dialog>
               <q-select
                 filled
                 v-model="formValues.itemType"
@@ -168,8 +114,6 @@ import useStates from "../modules/states";
 import itemTypeData from "../database/itemType.json";
 import EnhanceTable from "components/enhanceTable.vue";
 
-const formulaStringOptions = ["Additive", "Multiplicative"];
-
 export default defineComponent({
   name: "Enhance Calculator",
 
@@ -181,12 +125,10 @@ export default defineComponent({
     const formValues = reactive({
       premium: false,
       event: false,
-      formula: "Additive",
       itemType: itemTypeData[0],
       failstack: 0,
     });
     const itemTypeOptions = itemTypeData;
-    const alert = ref(false);
     const simSelectedGrade = ref(0);
     const simResultArr = reactive([]);
     const { storagePermission } = useStates();
@@ -202,9 +144,6 @@ export default defineComponent({
         formValues.event = enhanceConfig.event
           ? enhanceConfig.event
           : formValues.event;
-        formValues.formula = enhanceConfig.formula
-          ? enhanceConfig.formula
-          : formValues.formula;
       } catch (e) {
         localStorage.removeItem("enhanceConfig");
       }
@@ -277,7 +216,7 @@ export default defineComponent({
     );
 
     watch(
-      () => [formValues.premium, formValues.event, formValues.formula],
+      () => [formValues.premium, formValues.event],
       () => {
         if (storagePermission.value) {
           localStorage.setItem("enhanceConfig", JSON.stringify(formValues));
@@ -288,10 +227,7 @@ export default defineComponent({
     const finalBonus = computed(() => {
       let premiumMultiplier = formValues.premium ? 1.3 : 1;
       let eventMultiplier = formValues.event ? 1.2 : 1;
-      let multiplier =
-        formValues.formula === "Additive"
-          ? premiumMultiplier + eventMultiplier - 1
-          : premiumMultiplier * eventMultiplier;
+      let multiplier = premiumMultiplier * eventMultiplier;
       return (
         formValues.failstack *
         itemTypeData[formValues.itemType.id].fsValue *
@@ -309,7 +245,6 @@ export default defineComponent({
 
     return {
       formValues,
-      formulaStringOptions,
       itemTypeOptions,
       alert,
       simSelectedGrade,

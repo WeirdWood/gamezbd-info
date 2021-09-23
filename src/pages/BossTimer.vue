@@ -421,7 +421,7 @@ export default {
 
     async function runFetchInterval() {
       while (fetchInterval.value && !error.value) {
-        await new Promise((resolve) => setTimeout(resolve, 2 * 60 * 60 * 1000));
+        await new Promise((resolve) => setTimeout(resolve, 30 * 60 * 1000));
         await getBossData();
         evalTimer();
       }
