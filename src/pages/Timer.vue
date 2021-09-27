@@ -87,7 +87,7 @@
             GameZ Weekend Event
           </h5>
           <q-card-section class="q-pa-none text-body2">
-            <p class="weekend-event--body">
+            <p style="line-height: 2">
               <label class="text-weight-medium"> This Weekend </label> <br />
               <span v-html="weekendEvents[thisWeekIndex].detail"></span> <br />
               Estimate:
@@ -245,15 +245,17 @@ export default {
         data = JSON.parse(data);
         serverStat.value = data.results[0];
         let tmpDate = new Date(serverStat.value.check_start_time);
-        serverStat.value.time = Date.UTC(
-          tmpDate.getUTCFullYear(),
-          tmpDate.getUTCMonth(),
-          tmpDate.getUTCDate(),
-          tmpDate.getUTCHours(),
-          tmpDate.getUTCMinutes(),
-          tmpDate.getUTCSeconds(),
-          tmpDate.getUTCMilliseconds()
-        );
+        serverStat.value.time =
+          Date.UTC(
+            tmpDate.getUTCFullYear(),
+            tmpDate.getUTCMonth(),
+            tmpDate.getUTCDate(),
+            tmpDate.getUTCHours(),
+            tmpDate.getUTCMinutes(),
+            tmpDate.getUTCSeconds(),
+            tmpDate.getUTCMilliseconds()
+          ) -
+          60 * 1000;
         isLoading.value = false;
         updateCountdowns();
       } catch (err) {
@@ -423,9 +425,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.weekend-event--body {
-  line-height: 2;
-}
-</style>

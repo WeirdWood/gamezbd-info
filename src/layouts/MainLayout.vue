@@ -201,7 +201,11 @@
       </q-dialog>
     </q-page-container>
 
-    <q-footer v-if="!storagePermission" class="cookie-footer text-white">
+    <q-footer
+      v-if="!storagePermission"
+      class="text-white"
+      style="background-color: #424851"
+    >
       <div class="row items-center q-pa-md">
         <p class="col text-body1 q-ma-none q-mr-sm">
           This website uses cookies to ensure you get the best experience on our
@@ -347,18 +351,3 @@ export default defineComponent({
   },
 });
 </script>
-
-<style lang="scss">
-.cookie-footer {
-  background-color: #424851;
-}
-.server-select {
-  .q-field__native,
-  .q-field__append {
-    color: white !important;
-  }
-  .q-field__native {
-    margin-left: 0.75rem;
-  }
-}
-</style>

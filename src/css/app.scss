@@ -9,35 +9,74 @@
 }
 
 .body--light {
-    background-color: $grey-2;
+  background-color: $grey-2;
 }
 
 body.body--dark {
-    color: #f1f1f1;
+  color: #f1f1f1;
 }
 
 .q-dark {
-    color: #f1f1f1;
+  color: #f1f1f1;
 }
 
-.q-list--dark, .q-item--dark {
-    color: #f1f1f1;
+.q-list--dark,
+.q-item--dark {
+  color: #f1f1f1;
 
-    &.q-item--active {
-        color: $primary;
-    }
+  &.q-item--active {
+    color: $primary;
+  }
 }
 
-.q-field--dark .q-field__native, .q-field--dark .q-field__prefix, .q-field--dark .q-field__suffix, .q-field--dark .q-field__input {
-    color: #f1f1f1;
+.q-field--dark .q-field__native,
+.q-field--dark .q-field__prefix,
+.q-field--dark .q-field__suffix,
+.q-field--dark .q-field__input {
+  color: #f1f1f1;
 }
 
 .q-scrollarea.q-scrollarea--dark {
-    background-color: #212121 !important;
+  background-color: #212121 !important;
 }
 
 .q-field--dark .q-field__control:before {
-    border-color: rgba(#fff, 0.4);
+  border-color: rgba(#fff, 0.4);
+}
+
+pre {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  margin: 0;
+}
+
+.server-select {
+  .q-field__native,
+  .q-field__append {
+    color: white !important;
+  }
+  .q-field__native {
+    margin-left: 0.75rem;
+  }
+}
+
+.btn-group-simulate {
+  flex-wrap: wrap !important;
+
+  .q-btn--rounded {
+    background-color: $grey-2;
+    border-radius: $generic-border-radius !important;
+    margin-right: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+}
+
+.q-dark .btn-group-simulate {
+  .q-btn--rounded {
+    background-color: rgba(white, 0.12);
+  }
 }
 
 @media only screen and (min-width: 640px) {

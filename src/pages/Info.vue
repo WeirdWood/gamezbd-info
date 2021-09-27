@@ -90,13 +90,3 @@ export default defineComponent({
   },
 });
 </script>
-
-<style lang="scss">
-pre {
-  white-space: pre-wrap;
-  word-wrap: break-word;
-  font-size: 0.875rem;
-  line-height: 1.25rem;
-  margin: 0;
-}
-</style>

@@ -88,7 +88,7 @@
             />
             <q-scroll-area
               class="full-width cornered q-pa-md"
-              style="height: 12rem"
+              style="background-color: #f5f5f5; height: 12rem"
             >
               <p
                 v-for="result in simResultArr.slice().reverse()"
@@ -257,28 +257,3 @@ export default defineComponent({
   },
 });
 </script>
-
-<style lang="scss">
-.btn-group-simulate {
-  flex-wrap: wrap !important;
-
-  .q-btn--rounded {
-    background-color: $grey-2;
-    border-radius: $generic-border-radius !important;
-    margin-right: 0.5rem;
-    margin-bottom: 0.5rem;
-  }
-}
-
-.q-dark .btn-group-simulate {
-  .q-btn--rounded {
-    background-color: rgba(white, 0.12);
-  }
-}
-</style>
-
-<style lang="scss" scoped>
-.q-scrollarea {
-  background-color: $grey-2;
-}
-</style>
