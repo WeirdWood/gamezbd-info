@@ -87,6 +87,7 @@
           >
             <template v-slot:body="props">
               <q-tr
+                v-show="!props.row.hide"
                 :props="props"
                 :class="{
                   'text-strike text-weight-light': props.row.reached,
@@ -144,7 +145,7 @@
 </template>
 
 <script>
-import { reactive, ref, onBeforeUnmount, watch } from "vue";
+import { reactive, ref, onBeforeUnmount, watch, computed } from "vue";
 import { useQuasar } from "quasar";
 import useStates from "../modules/states";
 import sortBy from "lodash.sortby";
@@ -228,6 +229,7 @@ export default {
     const error = ref(false);
     const interval = ref(null);
     const fetchInterval = ref(true);
+    const refetch = ref(false);
 
     var bossData;
     //var alarmBossAudio = new Audio(require("../assets/alarm-effect.mp3"));
@@ -275,7 +277,7 @@ export default {
     watch(
       () => [formValues.selectedChannels, formValues.hideHuntingBoss],
       () => {
-        mapBossData(bossData);
+        filterBosses();
         evalTimer();
       }
     );
@@ -303,13 +305,9 @@ export default {
 
     function mapBossData(data) {
       if (data) {
-        bossArray.value.length = 0;
+        //bossArray.value.length = 0;
 
         data.forEach((element) => {
-          if (formValues.hideHuntingBoss) {
-            if (huntingBossNames.includes(element.name)) return;
-          }
-          if (!formValues.selectedChannels.includes(element.server)) return;
           if (element.name === "Vell") return;
 
           let icon = bossIcon[element.name]
@@ -317,46 +315,76 @@ export default {
             : "/img/game-icons/unknown.png";
           let time = Date.parse(element.time);
           let notified = time < Date.now() ? true : false;
-          bossArray.value.push({
-            name: element.name,
-            icon: icon,
-            channel: element.server,
-            time: time,
-            notified: notified,
-          });
+
+          if (bossArray.value.length) {
+            let exist = false;
+            for (let index = 0; index < bossArray.value.length; index++) {
+              const old_boss = bossArray.value[index];
+              if (
+                element.name === old_boss.name &&
+                element.server === old_boss.channel &&
+                time === old_boss.time
+              ) {
+                exist = true;
+                break;
+              }
+            }
+
+            if (!exist)
+              bossArray.value.push({
+                name: element.name,
+                icon: icon,
+                channel: element.server,
+                time: time,
+                notified: notified,
+              });
+          } else {
+            bossArray.value.push({
+              name: element.name,
+              icon: icon,
+              channel: element.server,
+              time: time,
+              notified: notified,
+            });
+          }
         });
       }
 
       //Adding custom Vell time that account for the extra 30mins spawn time
-      var d = new Date();
-      let spawnHour = selectedServer.value.value === "NA" ? 23 : 16;
-      let nextThursdayVellTime = Date.parse(
-        getNextOccuranceOfUTCDayAndHour(d, 4, spawnHour, 30)
-      );
-      let nextSundayVellTime = Date.parse(
-        getNextOccuranceOfUTCDayAndHour(d, 7, spawnHour, 30)
-      );
-      let nextVellTime =
-        nextThursdayVellTime < nextSundayVellTime
-          ? nextThursdayVellTime
-          : nextSundayVellTime;
+      if (!refetch.value) {
+        var d = new Date();
+        let spawnHour = selectedServer.value.value === "NA" ? 23 : 16;
+        let nextThursdayVellTime = Date.parse(
+          getNextOccuranceOfUTCDayAndHour(d, 4, spawnHour, 30)
+        );
+        let nextSundayVellTime = Date.parse(
+          getNextOccuranceOfUTCDayAndHour(d, 7, spawnHour, 30)
+        );
+        let nextVellTime =
+          nextThursdayVellTime < nextSundayVellTime
+            ? nextThursdayVellTime
+            : nextSundayVellTime;
 
-      for (const channel of channelOptions) {
-        if (formValues.selectedChannels.includes(channel))
-          bossArray.value.push({
-            name: "Vell",
-            icon: `/img/game-icons/${bossIcon["Vell"]}`,
-            channel: channel,
-            time: nextVellTime,
-          });
+        for (const channel of channelOptions) {
+          if (formValues.selectedChannels.includes(channel))
+            bossArray.value.push({
+              name: "Vell",
+              icon: `/img/game-icons/${bossIcon["Vell"]}`,
+              channel: channel,
+              time: nextVellTime,
+            });
+        }
       }
 
       bossArray.value = sortBy(bossArray.value, "time");
+      filterBosses();
+      refetch.value = true;
     }
 
     async function evalTimer() {
       let d = Date.now();
       for (const element of bossArray.value) {
+        if (element.hide) continue;
         let secs = (element.time - d) / 1000;
         if (secs <= 60 * 5) element.close = true;
         if (secs <= -(60 * 15)) element.remove = true;
@@ -415,6 +443,17 @@ export default {
       bossArray.value = bossArray.value.filter((item) => !item.remove);
     }
 
+    function filterBosses() {
+      bossArray.value.forEach((element) => {
+        element.hide = false;
+        if (formValues.hideHuntingBoss) {
+          if (huntingBossNames.includes(element.name)) element.hide = true;
+        }
+        if (!formValues.selectedChannels.includes(element.channel))
+          element.hide = true;
+      });
+    }
+
     function runTimer() {
       interval.value = setInterval(evalTimer, 2000);
     }
@@ -422,8 +461,10 @@ export default {
     async function runFetchInterval() {
       while (fetchInterval.value && !error.value) {
         await new Promise((resolve) => setTimeout(resolve, 30 * 60 * 1000));
-        await getBossData();
-        evalTimer();
+        if (fetchInterval.value && !error.value) {
+          await getBossData();
+          evalTimer();
+        }
       }
     }
 

@@ -33,14 +33,14 @@
               :name="`Imperial crafting reset`"
               :secs="clock.secsUntilImperialReset"
               :icon="'/img/game-icons/imperial-crafting-icon.png'"
-              :loading="isLoading"
+              :loading="isLoading || serverStat.new_state !== 'AV'"
               :disableAlarmBtn="serverStat.new_state !== 'AV'"
             />
             <time-label
               :name="`Imperial trading reset`"
               :secs="clock.secsUntilImperialTradingReset"
               :icon="'/img/game-icons/imperial-trading-icon.png'"
-              :loading="isLoading"
+              :loading="isLoading || serverStat.new_state !== 'AV'"
               :disableAlarmBtn="serverStat.new_state !== 'AV'"
             />
             <time-label
