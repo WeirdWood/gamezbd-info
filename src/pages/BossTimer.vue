@@ -90,7 +90,7 @@
                 v-show="!props.row.hide"
                 :props="props"
                 :class="{
-                  'text-strike text-weight-light': props.row.reached,
+                  'text-strike text-weight-light text-de-emphasize': props.row.reached,
                   'text-primary': props.row.close && !props.row.reached,
                   'text-italic': props.row.notified,
                 }"
