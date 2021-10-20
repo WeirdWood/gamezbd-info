@@ -244,18 +244,7 @@ export default {
         var data = await response.text();
         data = JSON.parse(data);
         serverStat.value = data.results[0];
-        let tmpDate = new Date(serverStat.value.check_start_time);
-        serverStat.value.time =
-          Date.UTC(
-            tmpDate.getUTCFullYear(),
-            tmpDate.getUTCMonth(),
-            tmpDate.getUTCDate(),
-            tmpDate.getUTCHours(),
-            tmpDate.getUTCMinutes(),
-            tmpDate.getUTCSeconds(),
-            tmpDate.getUTCMilliseconds()
-          ) -
-          60 * 1000;
+        serverStat.value.time = new Date(serverStat.value.check_start_time);
         isLoading.value = false;
         updateCountdowns();
       } catch (err) {
