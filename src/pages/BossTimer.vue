@@ -323,7 +323,7 @@ export default {
               if (
                 element.name === old_boss.name &&
                 element.server === old_boss.channel &&
-                time === old_boss.time
+                Math.abs(time - old_boss.time) < 2 * 60 * 1000
               ) {
                 exist = true;
                 break;
