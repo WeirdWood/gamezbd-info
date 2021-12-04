@@ -74,7 +74,14 @@ export default defineComponent({
 
         if (eventXML) {
           let parsed = parser.parse(eventXML);
-          eventData.array = parsed.rss.channel.item;
+          let items = parsed.rss.channel.item;
+          if (
+            typeof items === "object" &&
+            !Array.isArray(items) &&
+            items !== null
+          )
+            eventData.array = [items];
+          else eventData.array = items;
         }
 
         if (patchXML) {
