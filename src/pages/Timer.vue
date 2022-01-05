@@ -192,7 +192,7 @@ export default {
     })();
 
     onMounted(() => {
-      var baseTick = 4444.444444;
+      let baseTick = 4444.444444;
       setInterval(updateClockActive, baseTick);
       setInterval(updateClock, baseTick * 6);
       setInterval(updateCountdowns, 5 * 1000);
@@ -241,7 +241,7 @@ export default {
     async function getServerData(url) {
       try {
         const response = await fetch(url);
-        var data = await response.text();
+        let data = await response.text();
         data = JSON.parse(data);
         serverStat.value = data.results[0];
         serverStat.value.time = new Date(serverStat.value.check_start_time);
@@ -253,13 +253,13 @@ export default {
     }
 
     function updateCountdowns() {
-      var d = new Date();
-      var startHour = Date.UTC(
+      let d = new Date();
+      let startHour = Date.UTC(
         d.getUTCFullYear(),
         d.getUTCMonth(),
         d.getUTCDate()
       );
-      var rlDayElapsedS = (Date.now() - startHour) / 1000;
+      let rlDayElapsedS = (Date.now() - startHour) / 1000;
       let elapsed = (Date.now() - serverStat.value.time) / 1000;
 
       // Midnight UTC
@@ -297,23 +297,23 @@ export default {
     }
 
     function updateClock() {
-      var d = new Date();
-      var startHour = Date.UTC(
+      let d = new Date();
+      let startHour = Date.UTC(
         d.getUTCFullYear(),
         d.getUTCMonth(),
         d.getUTCDate()
       );
-      var rlDayElapsedS = (Date.now() - startHour) / 1000;
-      var secsIntoGameDay = (rlDayElapsedS + 200 * 60 + 20 * 60) % (240 * 60);
-      var gameHour;
+      let rlDayElapsedS = (Date.now() - startHour) / 1000;
+      let secsIntoGameDay = (rlDayElapsedS + 200 * 60 + 20 * 60) % (240 * 60);
+      let gameHour;
 
       // Last part of the shifted day is night
       if (secsIntoGameDay >= 12000) {
-        var secsIntoGameNight = secsIntoGameDay - 12000;
-        var pctOfNightDone = secsIntoGameNight / (40 * 60);
+        let secsIntoGameNight = secsIntoGameDay - 12000;
+        let pctOfNightDone = secsIntoGameNight / (40 * 60);
         gameHour = 9 * pctOfNightDone;
         gameHour = gameHour < 2 ? 22 + gameHour : gameHour - 2;
-        var secsUntilNightEnd = 40 * 60 - secsIntoGameNight;
+        let secsUntilNightEnd = 40 * 60 - secsIntoGameNight;
 
         clock.isDay = false;
         clock.inGameHour = (gameHour / 1) >> 0;
@@ -321,10 +321,10 @@ export default {
         clock.secsUntilNightEnd = secsUntilNightEnd;
         clock.secsUntilNightStart = secsUntilNightEnd + 12000;
       } else {
-        var secsIntoGameDaytime = secsIntoGameDay;
-        var pctOfDayDone = secsIntoGameDay / (200 * 60);
+        let secsIntoGameDaytime = secsIntoGameDay;
+        let pctOfDayDone = secsIntoGameDay / (200 * 60);
         gameHour = 7 + (22 - 7) * pctOfDayDone;
-        var secsUntilNightStart = 12000 - secsIntoGameDaytime;
+        let secsUntilNightStart = 12000 - secsIntoGameDaytime;
 
         clock.isDay = true;
         clock.inGameHour = (gameHour / 1) >> 0;
@@ -335,22 +335,21 @@ export default {
     }
 
     function updateWeekendEvent() {
-      var baselineDay = new Date(Date.UTC(2021, 3, 5, 12));
+      let baselineDay = new Date(Date.UTC(2021, 11, 27, 12)); //baseline is the last drop rate event end time (assumed 12 o'clock monday UTC)
+      let currentDate = new Date();
 
-      //var currentDate = new Date("Fri Jul 31 2021 15:00:00");
-      var currentDate = new Date();
-
-      var diffInWeeks = GetDifferenceInWeeks(baselineDay, currentDate);
+      let diffInWeeks = GetDifferenceInWeeks(baselineDay, currentDate);
 
       thisWeekIndex.value = diffInWeeks % weekendEvents.length;
       nextWeekIndex.value = (diffInWeeks + 1) % weekendEvents.length;
 
-      var secsTillNextEventStart =
+      let secsTillNextEventStart =
         (getNextOccuranceOfUTCDayAndHour(currentDate, 5, 22) - Date.now()) /
         1000;
-      var secsTillNextEventEnd =
+      let secsTillNextEventEnd =
         (getNextOccuranceOfUTCDayAndHour(currentDate, 1, 12) - Date.now()) /
         1000;
+
       if (secsTillNextEventStart < secsTillNextEventEnd) {
         weekendEvents[thisWeekIndex.value].isActive = false;
         weekendEvents[thisWeekIndex.value].time = secsTillNextEventStart;
@@ -369,18 +368,18 @@ export default {
     }
 
     function GetDifferenceInWeeks(baselineDay, currentDate) {
-      var diffInMs = currentDate - baselineDay;
+      let diffInMs = currentDate - baselineDay;
 
-      var msPerDay = 1000 * 60 * 60 * 24;
-      var diffInDays = Math.floor(diffInMs / msPerDay);
+      let msPerDay = 1000 * 60 * 60 * 24;
+      let diffInDays = Math.floor(diffInMs / msPerDay);
 
-      var diffInWeeks = Math.floor(diffInDays / 7);
+      let diffInWeeks = Math.floor(diffInDays / 7);
       return diffInWeeks;
     }
 
     const ampm = computed(() => (clock.inGameHour < 12 ? "AM" : "PM"));
     const displayHour = computed(() => {
-      var t = clock.inGameHour % 12;
+      let t = clock.inGameHour % 12;
       if (t === 0) {
         t = 12;
       }

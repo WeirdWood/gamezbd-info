@@ -12,16 +12,16 @@
     "serve": "quasar serve dist/spa --history"
   },
   "dependencies": {
-    "@quasar/extras": "^1.12.1",
-    "core-js": "^3.19.2",
+    "@quasar/extras": "^1.12.2",
+    "core-js": "^3.20.2",
     "fast-xml-parser": "^3.21.1",
     "lodash.filter": "^4.6.0",
     "lodash.sortby": "^4.7.0",
-    "quasar": "^2.3.3"
+    "quasar": "^2.4.3"
   },
   "devDependencies": {
-    "@babel/eslint-parser": "^7.16.3",
-    "@quasar/app": "^3.2.4",
+    "@babel/eslint-parser": "^7.16.5",
+    "@quasar/app": "^3.2.6",
     "eslint": "^7.14.0",
     "eslint-config-prettier": "^8.1.0",
     "eslint-plugin-vue": "^7.20.0",
