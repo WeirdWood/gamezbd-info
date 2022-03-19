@@ -17,7 +17,9 @@
     "fast-xml-parser": "^3.21.1",
     "lodash.filter": "^4.6.0",
     "lodash.sortby": "^4.7.0",
-    "quasar": "^2.4.3"
+    "quasar": "^2.4.3",
+    "vue": "^3.2.31",
+    "vue-router": "^4.0.14"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.16.5",
