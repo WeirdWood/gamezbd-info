@@ -335,7 +335,7 @@ export default {
     }
 
     function updateWeekendEvent() {
-      let baselineDay = new Date(Date.UTC(2021, 11, 27, 12)); //baseline is the last drop rate event end time (assumed 12 o'clock monday UTC)
+      let baselineDay = new Date(Date.UTC(2022, 2, 7, 12)); //baseline is the last drop rate event end time (assumed 12 o'clock monday UTC)
       let currentDate = new Date();
 
       let diffInWeeks = GetDifferenceInWeeks(baselineDay, currentDate);
