@@ -17,13 +17,13 @@
     "fast-xml-parser": "^3.21.1",
     "lodash.filter": "^4.6.0",
     "lodash.sortby": "^4.7.0",
-    "quasar": "^2.4.3",
+    "quasar": "^2.6.6",
     "vue": "^3.2.31",
     "vue-router": "^4.0.14"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.16.5",
-    "@quasar/app": "^3.2.6",
+    "@quasar/app-webpack": "^3.5.1",
     "eslint": "^7.14.0",
     "eslint-config-prettier": "^8.1.0",
     "eslint-plugin-vue": "^7.20.0",

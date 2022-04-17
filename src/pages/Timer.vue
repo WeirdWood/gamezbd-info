@@ -143,7 +143,8 @@
 import { onMounted, reactive, computed, ref } from "vue";
 import timeLabel from "../components/timeLabel.vue";
 import useStates from "../modules/states";
-import weekendEventData from "../database/weekendEvent.json";
+import weekendEventsData from "../database/weekendEvent.json";
+let [weekendEventData, baselineDayData] = weekendEventsData;
 
 // const NAUrl =
 //   "https://status.gamezbd.net/api/getMonitor/7DMKmfmWE6?m=784986409";
@@ -175,7 +176,7 @@ export default {
       secsUntilJumanjiReset: 0,
       secsUntilBarterPointReset: 0,
     });
-    const serverStat = ref({});
+    const serverStat = ref({ new_state: null });
     const weekendEvents = reactive(weekendEventData);
     const thisWeekIndex = ref(0);
     const nextWeekIndex = ref(1);
@@ -335,7 +336,14 @@ export default {
     }
 
     function updateWeekendEvent() {
-      let baselineDay = new Date(Date.UTC(2022, 2, 7, 12)); //baseline is the last drop rate event end time (assumed 12 o'clock monday UTC)
+      let baselineDay = new Date(
+        Date.UTC(
+          baselineDayData.year,
+          baselineDayData.month,
+          baselineDayData.day,
+          12
+        )
+      ); //baseline is the last drop rate event end time (assumed 12 o'clock monday UTC)
       let currentDate = new Date();
 
       let diffInWeeks = GetDifferenceInWeeks(baselineDay, currentDate);
