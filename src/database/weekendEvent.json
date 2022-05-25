@@ -9,16 +9,11 @@
       "id": 1,
       "name": "Enhance",
       "detail": "- Exp rates increased by 20%</br>- Increased Enhancement (FS) rates by 20%</br>- Double rewards for RBF PvP"
-    },
-    {
-      "id": 2,
-      "name": "Gold Event",
-      "detail": "- Gold event enabled:</br>- Golden Dagger can be obtained from drops</br>- Golden Backpack can be obtained from gathering</br>- Golden Coelacanth can be obtained from fishing</br>- Double rewards for RBF PvP"
     }
   ],
   {
     "year": 2022,
-    "month": 2,
-    "day": 21
+    "month": 4,
+    "day": 16
   }
 ]
