@@ -308,6 +308,7 @@ export default {
         //bossArray.value.length = 0;
 
         data.forEach((element) => {
+          element.name = element.name.replace("※ ", "");
           if (element.name === "Vell") return;
 
           let icon = bossIcon[element.name]
