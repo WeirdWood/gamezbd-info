@@ -308,11 +308,11 @@ export default {
         //bossArray.value.length = 0;
 
         data.forEach((element) => {
-          element.name = element.name.replace("※ ", "");
-          if (element.name === "Vell") return;
+          let name = element.name.replace(/[^\w\s]/gi, '').trim();
+          if (name.includes("Vell")) return;
 
-          let icon = bossIcon[element.name]
-            ? `/img/game-icons/${bossIcon[element.name]}`
+          let icon = bossIcon[name]
+            ? `/img/game-icons/${bossIcon[name]}`
             : "/img/game-icons/unknown.png";
           let time = Date.parse(element.time);
           let notified = time < Date.now() ? true : false;
@@ -322,7 +322,7 @@ export default {
             for (let index = 0; index < bossArray.value.length; index++) {
               const old_boss = bossArray.value[index];
               if (
-                element.name === old_boss.name &&
+                name === old_boss.name &&
                 element.server === old_boss.channel &&
                 Math.abs(time - old_boss.time) < 2 * 60 * 1000
               ) {
@@ -333,7 +333,7 @@ export default {
 
             if (!exist)
               bossArray.value.push({
-                name: element.name,
+                name: name,
                 icon: icon,
                 channel: element.server,
                 time: time,
@@ -341,7 +341,7 @@ export default {
               });
           } else {
             bossArray.value.push({
-              name: element.name,
+              name: name,
               icon: icon,
               channel: element.server,
               time: time,
